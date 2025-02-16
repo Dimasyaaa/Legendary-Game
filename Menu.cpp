@@ -4,6 +4,8 @@
 
 using namespace std;
 
+int currentColor = 0;
+
 void startGame() {
     cout << "Игра начата!" << endl;
     // BEST GAME EVER!!!
@@ -19,46 +21,70 @@ void showSettings() {
     // Здесь мы пропишем настроечки
 }
 
+void changeColor() {
+    cout << "Выберите цвет текста (0 - обычный, 1 - красный, 2 - зелёный, 3 - синий): ";
+    cin >> currentColor;
+
+    switch (currentColor) {
+    case 0:
+        cout << "\033[0m"; // Нормальный цвет
+        break;
+    case 1:
+        cout << "\033[31m"; // Красный
+        break;
+    case 2:
+        cout << "\033[32m"; // Зелёный
+        break;
+    case 3:
+        cout << "\033[34m"; // Синий
+        break;
+    default:
+        cout << "\033[0m";
+        cout << "Неверный выбор. Цвет установлен по умолчанию." << endl;
+        break;
+    }
+}
+
+void showMenu() {
+    cout << "===== ЛАБИКА =====" << endl;
+    cout << "1. Начать игру" << endl;
+    cout << "2. Рекорды" << endl;
+    cout << "3. Настройки" << endl;
+    cout << "4. Выход" << endl;
+}
+
 int main() {
-    
     setlocale(LC_ALL, "Rus");
 
     int choice;
 
     do {
-        cout << "===== ЛАБИКА =====" << endl;
-        cout << "1. Начать игру" << endl;
-        cout << "2. Рекорды" << endl;
-        cout << "3. Настройки" << endl;
-        cout << "4. Выход" << endl;
+        showMenu();
         cout << "Выберите опцию (1-4): ";
         cin >> choice;
 
         switch (choice) {
         case 1:
             startGame();
-            system("cls");
-            string username;
-            cout << "Введите ваше имя: " << endl;
-            cin >> username;
-            ofstream out("Legendary-Game/IDEA/records.txt", ios::app);
-            //out.open("Legendary-Game/IDEA/records.txt");
-            if (out.is_open())
             {
-                out << username << " ";
+                string username;
+                cout << "Введите ваше имя: " << endl;
+                cin >> username;
+                ofstream out("records.txt", ios::app);
+                if (out.is_open()) {
+                    out << username << " ";
+                }
+                out.close();
             }
-            out.close(); 
             break;
         case 2:
             showScores();
-            system("cls");
             break;
         case 3:
             showSettings();
-            system("cls");
+            changeColor();
             break;
         case 4:
-            system("cls");
             cout << "Выход из игры..." << endl;
             break;
         default:
