@@ -41,8 +41,8 @@ int main() {
             string username;
             cout << "Введите ваше имя: " << endl;
             cin >> username;
-            ofstream out;
-            out.open("Legendary-Game/IDEA/records.txt");
+            ofstream out("Legendary-Game/IDEA/records.txt", ios::app);
+            //out.open("Legendary-Game/IDEA/records.txt");
             if (out.is_open())
             {
                 out << username << " ";
