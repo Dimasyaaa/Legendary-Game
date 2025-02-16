@@ -1,0 +1,18 @@
+#include <iostream>
+#include <windows.h>
+
+void setColor(int textColor, int bgColor) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, (bgColor << 4) | textColor);
+}
+
+int main() {
+    setColor(10, 0); // Зеленый текст на черном фоне
+    std::cout << "Hello, World!" << std::endl;
+
+    setColor(15, 1); // Белый текст на синем фоне
+    std::cout << "Another line!" << std::endl;
+
+    setColor(7, 0); // Сброс к стандартному цвету
+    return 0;
+}
