@@ -36,14 +36,18 @@ int main() {
         switch (choice) {
         case 1:
             startGame();
+            system("cls");
             break;
         case 2:
             showScores();
+            system("cls");
             break;
         case 3:
             showSettings();
+            system("cls");
             break;
         case 4:
+            system("cls");
             cout << "Выход из игры..." << endl;
             break;
         default:
