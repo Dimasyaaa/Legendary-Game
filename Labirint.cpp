@@ -11,7 +11,7 @@ using namespace std;
 
 const int n = 25;  // Высота карты
 const int m = 25;  // Ширина карты
-
+///
 class Game {
 private:
     char map[n][m]; // Карта
