@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -37,6 +38,16 @@ int main() {
         case 1:
             startGame();
             system("cls");
+            string username;
+            cout << "Введите ваше имя: " << endl;
+            cin >> username;
+            ofstream out;
+            out.open("Legendary-Game/IDEA/records.txt");
+            if (out.is_open())
+            {
+                out << username << " ";
+            }
+            out.close(); 
             break;
         case 2:
             showScores();
