@@ -75,7 +75,7 @@ int main() {
             string username;
             cout << "Введите ваше имя: " << endl;
             cin >> username;
-            ofstream out("records.txt", ios::app);
+            ofstream out("IDEA/records.txt", ios::app);
             if (out.is_open()) {
                     out << username << " ";
                 }
