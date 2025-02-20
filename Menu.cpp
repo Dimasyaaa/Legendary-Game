@@ -58,20 +58,21 @@ int main() {
 
     int choice;
 
-    do {
+    bool flag = true;
+    while (flag){
         showMenu();
         cout << "Выберите опцию (1-4): ";
-        cin >> choice;
 
+        cin >> choice;
         switch (choice) {
         case 1:
             startGame();
             {
-                string username;
-                cout << "Введите ваше имя: " << endl;
-                cin >> username;
-                ofstream out("records.txt", ios::app);
-                if (out.is_open()) {
+            string username;
+            cout << "Введите ваше имя: " << endl;
+            cin >> username;
+            ofstream out("records.txt", ios::app);
+            if (out.is_open()) {
                     out << username << " ";
                 }
                 out.close();
@@ -86,13 +87,14 @@ int main() {
             break;
         case 4:
             cout << "Выход из игры..." << endl;
+            flag = false;
             break;
         default:
             cout << "Неверный выбор, попробуйте снова." << endl;
         }
 
         cout << endl; // Для удобства
-    } while (choice != 4);
+    }
 
     return 0;
 }
