@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <locale.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -54,6 +56,8 @@ void showMenu() {
 }
 
 int main() {
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "Rus");
 
     int choice;
