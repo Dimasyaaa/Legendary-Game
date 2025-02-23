@@ -16,10 +16,12 @@ random_device rd;
 
 const int n = 25;  // Высота карты
 const int m = 25;  // Ширина карты
-///
+
+unsigned char map_symbol = 219;
+
 class Game {
 private:
-    char map[n][m];     // Карта
+    unsigned char map[n][m];     // Карта
     int player_posX;    // Позиция игрока по X
     int player_posY;    // Позиция игрока по Y
     char treasureSymbol;// Символ сокровища
@@ -27,7 +29,7 @@ private:
     bool isRunning;     // Флаг для работы основного цикла игры
 
 public:
-    Game() : player_posX(1), player_posY(1), treasureSymbol(62), playerSymbol(42), isRunning(true) {
+    Game() : player_posX(1), player_posY(1), treasureSymbol(253), playerSymbol(245), isRunning(true) {
         initializeMap();
         generateMap();
         placeTreasure();
@@ -45,7 +47,7 @@ private:
     void initializeMap() {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                map[i][j] = '#'; // Заполнение карты границами
+                map[i][j] = map_symbol; // Заполнение карты границами
             }
         }
         map[player_posX][player_posY] = playerSymbol; // Установка начальной позиции игрока
@@ -70,16 +72,16 @@ private:
         map[player_posX][player_posY] = ' '; // Убираем символ игрока с текущей позиции
 
         // Обработка перемещения игрока
-        if ((button == 'd' || button == 'D') && map[player_posX][player_posY + 1] != '#') {
+        if ((button == 'd' || button == 'D') && map[player_posX][player_posY + 1] !=  map_symbol) {
             player_posY++;
         }
-        else if ((button == 'a' || button == 'A') && map[player_posX][player_posY - 1] != '#') {
+        else if ((button == 'a' || button == 'A') && map[player_posX][player_posY - 1] !=  map_symbol) {
             player_posY--;
         }
-        else if ((button == 's' || button == 'S') && map[player_posX + 1][player_posY] != '#') {
+        else if ((button == 's' || button == 'S') && map[player_posX + 1][player_posY] !=  map_symbol) {
             player_posX++;
         }
-        else if ((button == 'w' || button == 'W') && map[player_posX - 1][player_posY] != '#') {
+        else if ((button == 'w' || button == 'W') && map[player_posX - 1][player_posY] !=  map_symbol) {
             player_posX--;
         }
 
@@ -139,7 +141,7 @@ private:
 
         switch (vect) {
         case 1: {
-            if ((player_posX > 1) && (map[player_posX - 2][player_posY] == '#')) {
+            if ((player_posX > 1) && (map[player_posX - 2][player_posY] ==  map_symbol)) {
                 player_posX--;
                 map[player_posX + 1][player_posY] = ' ';
                 player_posX--;
@@ -153,7 +155,7 @@ private:
             }
         } break;
         case 2: {
-            if ((player_posY < m - 2) && (map[player_posX][player_posY + 2] == '#')) {
+            if ((player_posY < m - 2) && (map[player_posX][player_posY + 2] ==  map_symbol)) {
                 player_posY++;
                 map[player_posX][player_posY - 1] = ' ';
                 player_posY++;
@@ -167,7 +169,7 @@ private:
             }
         } break;
         case 3: {
-            if ((player_posX < n - 2) && (map[player_posX + 2][player_posY] == '#')) {
+            if ((player_posX < n - 2) && (map[player_posX + 2][player_posY] ==  map_symbol)) {
                 player_posX++;
                 map[player_posX - 1][player_posY] = ' ';
                 player_posX++;
@@ -181,7 +183,7 @@ private:
             }
         } break;
         case 4: {
-            if ((player_posY > 1) && (map[player_posX][player_posY - 2] == '#')) {
+            if ((player_posY > 1) && (map[player_posX][player_posY - 2] ==  map_symbol)) {
                 player_posY--;
                 map[player_posX][player_posY + 1] = ' ';
                 player_posY--;
@@ -199,7 +201,6 @@ private:
 };
 
 int main() {
-    setlocale(LC_ALL, "RUS");
 
     Game game;
     game.run();
