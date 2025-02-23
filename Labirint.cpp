@@ -9,20 +9,25 @@
 
 using namespace std;
 
+//рандомное зерно для генераций
+random_device rd;
+
+
+
 const int n = 25;  // Высота карты
 const int m = 25;  // Ширина карты
 ///
 class Game {
 private:
-    char map[n][m]; // Карта
-    int player_posX; // Позиция игрока по X
-    int player_posY; // Позиция игрока по Y
-    char treasureSymbol; // Символ сокровища
-    char playerSymbol; // Символ игрока
-    bool isRunning; // Флаг для работы основного цикла игры
+    char map[n][m];     // Карта
+    int player_posX;    // Позиция игрока по X
+    int player_posY;    // Позиция игрока по Y
+    char treasureSymbol;// Символ сокровища
+    char playerSymbol;  // Символ игрока
+    bool isRunning;     // Флаг для работы основного цикла игры
 
 public:
-    Game() : player_posX(1), player_posY(1), treasureSymbol(2), playerSymbol(4), isRunning(true) {
+    Game() : player_posX(1), player_posY(1), treasureSymbol(62), playerSymbol(42), isRunning(true) {
         initializeMap();
         generateMap();
         placeTreasure();
@@ -36,6 +41,7 @@ public:
     }
 
 private:
+    //Метод для инициализации карты
     void initializeMap() {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
@@ -44,12 +50,12 @@ private:
         }
         map[player_posX][player_posY] = playerSymbol; // Установка начальной позиции игрока
     }
-
+    //метод для вывода карты в консоль
     void displayMap() {
         system("cls");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++)
-                cout << map[i][j] << " ";
+                cout << map[i][j] <<" ";
             cout << endl;
         }
     }
@@ -94,7 +100,7 @@ private:
         int chet_pos = count_chet();
         while (!flag_end) {
             // провека четных клеток на пустоту
-            for (int i = 0; i < 50; i++) tractor_trail();
+            for (int i = 0; i < n*m; i++) tractor_trail();
 
             for (int i = 1; i < n; i += 2) {
                 for (int j = 1; j < m; j += 2) {
@@ -127,7 +133,6 @@ private:
     void tractor_trail() {
         // Записывает рандомное в vect рандомное число от 1 до 4
         int vect; // Изменено на int, так как используется для выбора кейса
-        random_device rd;
         mt19937 gen(rd());
         uniform_int_distribution<> dist(1, 4);
         vect = dist(gen);
@@ -194,7 +199,7 @@ private:
 };
 
 int main() {
-    setlocale(LC_ALL, "Rus");
+    setlocale(LC_ALL, "RUS");
 
     Game game;
     game.run();
