@@ -31,6 +31,8 @@ private:
     unsigned char map[n][m];     // Карта
     int player_posX;    // Позиция игрока по X
     int player_posY;    // Позиция игрока по Y
+    int treasure_X;     // Позиция сокровища Х
+    int treasure_Y;     // Позиция сокровища Y
     char treasureSymbol;// Символ сокровища
     char playerSymbol;  // Символ игрока
     bool isRunning;     // Флаг для работы основного цикла игры
@@ -97,15 +99,17 @@ private:
             player_posX--;
         }
 
-        // Проверка на победу
-        if (map[player_posX][player_posY] == treasureSymbol) {
-            cout << "Вы нашли сокровище!" << endl;
-            isRunning = false;
-        }
+
         gotoxy(player_posX,player_posY);
         cout << playerSymbol;
         map[player_posX][player_posY] = playerSymbol; // Установка символа игрока на новую позицию
 
+        // Проверка на победу
+        if (player_posX == treasure_X&& player_posY == treasure_Y) {
+                gotoxy(n,1);
+            cout << "Вы нашли сокровище!" << endl;
+            isRunning = false;
+        }
     }
 
     void generateMap() {
@@ -141,9 +145,9 @@ private:
     }
 
     void placeTreasure() {
-        int treasure_x = n - 1 - player_posX;
-        int treasure_y = m - 1 - player_posY;
-        map[treasure_x][treasure_y] = treasureSymbol; // Помещение сокровища на карту
+        treasure_X = n - 1 - player_posX;
+        treasure_Y = m - 1 - player_posY;
+        map[treasure_X][treasure_Y] = treasureSymbol; // Помещение сокровища на карту
     }
 
     void tractor_trail() {
@@ -217,6 +221,10 @@ int main() {
 
     Game game;
     game.run();
+//system ("chcp 65001");
+//cout<<"шалом";
+
+
 
     return 0;
 }
