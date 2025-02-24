@@ -1,5 +1,5 @@
 //              Игра ЛАБИКИ
-//  Авторы: Вся команда КОДОЛАБИКИ (Куклин, Корнилов, Поляков, Зайцева, Мешкова, Трунова)
+//  Авторы: Вся команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
 
 #include <iostream>
 #include <conio.h>
@@ -14,7 +14,7 @@ using namespace std;
 random_device rd;
 
 //функция переносса курсора на заданную позицию
-void gotoxy(int x, int y) {
+void gotoxy(int y, int x) {
     COORD coord;
     coord.X = x;
     coord.Y = y;
@@ -84,26 +84,17 @@ private:
 
 
         // Обработка перемещения игрока
-        if ((button == 'd' || button == 'D') && map[player_posX + 1][player_posY] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX + 1][player_posY];
-            player_posX++;
-
-        }
-        else if ((button == 'a' || button == 'A') && map[player_posX - 1][player_posY] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX - 1][player_posY];
-            player_posX--;
-        }
-        else if ((button == 's' || button == 'S') && map[player_posX ][player_posY+ 1] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX ][player_posY+ 1];
+        if ((button == 'd' || button == 'D') && map[player_posX][player_posY + 1] !=  map_symbol) {
             player_posY++;
         }
-        else if ((button == 'w' || button == 'W') && map[player_posX ][player_posY- 1] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX ][player_posY- 1];
+        else if ((button == 'a' || button == 'A') && map[player_posX ][player_posY- 1] !=  map_symbol) {
             player_posY--;
+        }
+        else if ((button == 's' || button == 'S') && map[player_posX + 1 ][player_posY] !=  map_symbol) {
+            player_posX++;
+        }
+        else if ((button == 'w' || button == 'W') && map[player_posX- 1 ][player_posY] !=  map_symbol) {
+            player_posX--;
         }
 
         // Проверка на победу
