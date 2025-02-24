@@ -6,7 +6,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <random>
-
+#include <time.h>
 using namespace std;
 
 //рандомное зерно для генераций
@@ -135,10 +135,9 @@ private:
     void tractor_trail() {
         // Записывает рандомное в vect рандомное число от 1 до 4
         int vect; // Изменено на int, так как используется для выбора кейса
-        mt19937 gen(rd());
+        mt19937 gen(rd()+time(NULL));
         uniform_int_distribution<> dist(1, 4);
         vect = dist(gen);
-
         switch (vect) {
         case 1: {
             if ((player_posX > 1) && (map[player_posX - 2][player_posY] ==  map_symbol)) {
