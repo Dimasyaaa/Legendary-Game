@@ -7,12 +7,19 @@
 #include <cstdlib>
 #include <random>
 #include <time.h>
+#include <windows.h>
 using namespace std;
 
 //рандомное зерно для генераций
 random_device rd;
 
-
+//функция переносса курсора на заданную позицию
+void gotoxy(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
 
 const int n = 25;  // Высота карты
 const int m = 25;  // Ширина карты
@@ -36,8 +43,9 @@ public:
     }
 
     void run() {
+        displayMap();
         while (isRunning) {
-            displayMap();
+//            displayMap();
             handleInput();
         }
     }
@@ -57,9 +65,10 @@ private:
         system("cls");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++)
-                cout << map[i][j] <<" ";
+                cout << map[i][j] ;
             cout << endl;
         }
+
     }
 
     void handleInput() {
@@ -68,21 +77,33 @@ private:
             isRunning = false; // Выход из игры
             return;
         }
-
+        gotoxy(player_posX,player_posY);
+        cout << ' ';
         map[player_posX][player_posY] = ' '; // Убираем символ игрока с текущей позиции
 
+
+
         // Обработка перемещения игрока
-        if ((button == 'd' || button == 'D') && map[player_posX][player_posY + 1] !=  map_symbol) {
+        if ((button == 'd' || button == 'D') && map[player_posX + 1][player_posY] !=  map_symbol) {
+            gotoxy(1,m+1);
+            cout<<"Cym_map:"<<map[player_posX + 1][player_posY];
+            player_posX++;
+
+        }
+        else if ((button == 'a' || button == 'A') && map[player_posX - 1][player_posY] !=  map_symbol) {
+            gotoxy(1,m+1);
+            cout<<"Cym_map:"<<map[player_posX - 1][player_posY];
+            player_posX--;
+        }
+        else if ((button == 's' || button == 'S') && map[player_posX ][player_posY+ 1] !=  map_symbol) {
+            gotoxy(1,m+1);
+            cout<<"Cym_map:"<<map[player_posX ][player_posY+ 1];
             player_posY++;
         }
-        else if ((button == 'a' || button == 'A') && map[player_posX][player_posY - 1] !=  map_symbol) {
+        else if ((button == 'w' || button == 'W') && map[player_posX ][player_posY- 1] !=  map_symbol) {
+            gotoxy(1,m+1);
+            cout<<"Cym_map:"<<map[player_posX ][player_posY- 1];
             player_posY--;
-        }
-        else if ((button == 's' || button == 'S') && map[player_posX + 1][player_posY] !=  map_symbol) {
-            player_posX++;
-        }
-        else if ((button == 'w' || button == 'W') && map[player_posX - 1][player_posY] !=  map_symbol) {
-            player_posX--;
         }
 
         // Проверка на победу
@@ -90,8 +111,10 @@ private:
             cout << "Вы нашли сокровище!" << endl;
             isRunning = false;
         }
-
+        gotoxy(player_posX,player_posY);
+        cout << playerSymbol;
         map[player_posX][player_posY] = playerSymbol; // Установка символа игрока на новую позицию
+
     }
 
     void generateMap() {
