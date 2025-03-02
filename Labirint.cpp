@@ -1,5 +1,5 @@
 //              Игра ЛАБИКИ
-//  Авторы: Вся команда КОДОЛАБИКИ (Куклин, Корнилов, Поляков, Зайцева, Мешкова, Трунова)
+//  Авторы: Вся команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
 
 #include <iostream>
 #include <conio.h>
@@ -14,7 +14,7 @@ using namespace std;
 random_device rd;
 
 //функция переносса курсора на заданную позицию
-void gotoxy(int x, int y) {
+void gotoxy(int y, int x) {
     COORD coord;
     coord.X = x;
     coord.Y = y;
@@ -31,6 +31,8 @@ private:
     unsigned char map[n][m];     // Карта
     int player_posX;    // Позиция игрока по X
     int player_posY;    // Позиция игрока по Y
+    int treasure_X;     // Позиция сокровища Х
+    int treasure_Y;     // Позиция сокровища Y
     char treasureSymbol;// Символ сокровища
     char playerSymbol;  // Символ игрока
     bool isRunning;     // Флаг для работы основного цикла игры
@@ -84,37 +86,30 @@ private:
 
 
         // Обработка перемещения игрока
-        if ((button == 'd' || button == 'D') && map[player_posX + 1][player_posY] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX + 1][player_posY];
-            player_posX++;
-
-        }
-        else if ((button == 'a' || button == 'A') && map[player_posX - 1][player_posY] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX - 1][player_posY];
-            player_posX--;
-        }
-        else if ((button == 's' || button == 'S') && map[player_posX ][player_posY+ 1] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX ][player_posY+ 1];
+        if ((button == 'd' || button == 'D') && map[player_posX][player_posY + 1] !=  map_symbol) {
             player_posY++;
         }
-        else if ((button == 'w' || button == 'W') && map[player_posX ][player_posY- 1] !=  map_symbol) {
-            gotoxy(1,m+1);
-            cout<<"Cym_map:"<<map[player_posX ][player_posY- 1];
+        else if ((button == 'a' || button == 'A') && map[player_posX ][player_posY- 1] !=  map_symbol) {
             player_posY--;
         }
-
-        // Проверка на победу
-        if (map[player_posX][player_posY] == treasureSymbol) {
-            cout << "Вы нашли сокровище!" << endl;
-            isRunning = false;
+        else if ((button == 's' || button == 'S') && map[player_posX + 1 ][player_posY] !=  map_symbol) {
+            player_posX++;
         }
+        else if ((button == 'w' || button == 'W') && map[player_posX- 1 ][player_posY] !=  map_symbol) {
+            player_posX--;
+        }
+
+
         gotoxy(player_posX,player_posY);
         cout << playerSymbol;
         map[player_posX][player_posY] = playerSymbol; // Установка символа игрока на новую позицию
 
+        // Проверка на победу
+        if (player_posX == treasure_X&& player_posY == treasure_Y) {
+                gotoxy(n,1);
+            cout << "Вы нашли сокровище!" << endl;
+            isRunning = false;
+        }
     }
 
     void generateMap() {
@@ -150,9 +145,9 @@ private:
     }
 
     void placeTreasure() {
-        int treasure_x = n - 1 - player_posX;
-        int treasure_y = m - 1 - player_posY;
-        map[treasure_x][treasure_y] = treasureSymbol; // Помещение сокровища на карту
+        treasure_X = n - 1 - player_posX;
+        treasure_Y = m - 1 - player_posY;
+        map[treasure_X][treasure_Y] = treasureSymbol; // Помещение сокровища на карту
     }
 
     void tractor_trail() {
@@ -226,6 +221,10 @@ int main() {
 
     Game game;
     game.run();
+//system ("chcp 65001");
+//cout<<"шалом";
+
+
 
     return 0;
 }
