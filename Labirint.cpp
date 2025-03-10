@@ -8,6 +8,8 @@
 #include <random>
 #include <time.h>
 #include <windows.h>
+#include <iomanip>
+
 using namespace std;
 
 //рандомное зерно для генераций
@@ -107,7 +109,7 @@ private:
         // Проверка на победу
         if (player_posX == treasure_X&& player_posY == treasure_Y) {
                 gotoxy(n,1);
-            cout << "Вы нашли сокровище!" << endl;
+            cout << "You found a treasure!" << endl;
             isRunning = false;
         }
     }
@@ -223,8 +225,6 @@ int main() {
     game.run();
 //system ("chcp 65001");
 //cout<<"шалом";
-
-
 
     return 0;
 }
