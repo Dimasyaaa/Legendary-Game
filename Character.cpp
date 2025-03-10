@@ -4,6 +4,54 @@
 
 using namespace std;
 
+//Класс Конвертор
+class Converter{
+private:
+    //коэфиценты
+    float factor_power; //силы
+    float factor_dexterity;//ловкость
+    float factor_bodytype;//телосложение
+    float factor_intelligence;//интеллект
+    float factor_luck;//удачи
+public:
+    Converter()
+    :factor_power(1.0), factor_dexterity(1.0), factor_bodytype(1.0), factor_intelligence(1.0), factor_luck(1.0) {}
+    //setters
+    void set_factor_power(float value){
+        factor_power = value;
+    }
+    void set_factor_dexterity(float value){
+        factor_dexterity = value;
+    }
+    void set_factor_bodytype(float value){
+        factor_bodytype = value;
+    }
+    void set_factor_intelligence(float value){
+        factor_intelligence = value;
+    }
+    void set_factor_luck(float value){
+        factor_luck = value;
+    }
+    //geters
+    float get_factor_power(){
+        return factor_power;
+    }
+    float get_factor_dexterity(){
+        return factor_dexterity;
+    }
+    float get_factor_bodytype(){
+        return factor_bodytype;
+    }
+    float get_factor_intelligence(){
+        return factor_intelligence;
+    }
+    float get_factor_luck(){
+        return factor_luck;
+    }
+
+};
+
+
 // Класс предмета
 class Item {
 private:
