@@ -9,22 +9,22 @@ using namespace std;
 int currentColor = 0;
 
 void startGame() {
-    cout << "Игра начата!" << endl;
+    cout << "The game has started!" << endl;
     // BEST GAME EVER!!!
 }
 
 void showScores() {
-    cout << "Рекорды:" << endl;
+    cout << "Records:" << endl;
     // Таблица рекордов
 }
 
 void showSettings() {
-    cout << "Настройки:" << endl;
+    cout << "Settings:" << endl;
     // Здесь мы пропишем настроечки
 }
 
 void changeColor() {
-    cout << "Выберите цвет текста (0 - обычный, 1 - красный, 2 - зелёный, 3 - синий): ";
+    cout << "Select the text color (0 - normal, 1 - red, 2 - green, 3 - blue):";
     cin >> currentColor;
 
     switch (currentColor) {
@@ -42,17 +42,17 @@ void changeColor() {
         break;
     default:
         cout << "\033[0m";
-        cout << "Неверный выбор. Цвет установлен по умолчанию." << endl;
+        cout << "Wrong choice. The color is set by default." << endl;
         break;
     }
 }
 
 void showMenu() {
-    cout << "===== ЛАБИКА =====" << endl;
-    cout << "1. Начать игру" << endl;
-    cout << "2. Рекорды" << endl;
-    cout << "3. Настройки" << endl;
-    cout << "4. Выход" << endl;
+    cout << "===== LABICA =====" << endl;
+    cout << "1. Start the game" << endl;
+    cout << "2. Records" << endl;
+    cout << "3. Settings" << endl;
+    cout << "4. Exit" << endl;
 }
 
 int main() {
@@ -65,7 +65,7 @@ int main() {
     bool flag = true;
     while (flag){
         showMenu();
-        cout << "Выберите опцию (1-4): ";
+        cout << "Select an option (1-4): ";
 
         cin >> choice;
         switch (choice) {
@@ -73,7 +73,7 @@ int main() {
             startGame();
             {
             string username;
-            cout << "Введите ваше имя: " << endl;
+            cout << "Enter your name: " << endl;
             cin >> username;
             ofstream out("IDEA/records.txt", ios::app);
             if (out.is_open()) {
@@ -90,11 +90,11 @@ int main() {
             changeColor();
             break;
         case 4:
-            cout << "Выход из игры..." << endl;
+            cout << "Exit the game..." << endl;
             flag = false;
             break;
         default:
-            cout << "Неверный выбор, попробуйте снова." << endl;
+            cout << "Wrong choice, try again." << endl;
         }
 
         cout << endl; // Для удобства
