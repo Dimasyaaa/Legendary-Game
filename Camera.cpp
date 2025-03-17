@@ -1,6 +1,8 @@
 #include <iostream>
 #include <conio.h>
 using namespace std;
+const int max_map=10;
+
 class Camera{
 private:
     int camera_pos_x;
@@ -9,13 +11,19 @@ private:
 public:
     Camera(int coord_x, int coord_y, int zom): camera_pos_x(coord_x), camera_pos_y(coord_y), zoom(zom){}
 
-    void broadcast ( unsigned char **broadcast_object, int size_object){  //С‚СЂР°РЅСЃР»СЏС†РёСЏ
-        for (int i = camera_pos_x ; i < size_object/zoom ; i++) {
-          for (int j = camera_pos_y; j < size_object/zoom; j++)
-                cout << broadcast_object[i][j] << endl;
+    //трансляция. Внутрь передаётся обьект трансляции - двумерный массив символов.
+    //Количество выводимы символов соответствует формуле(max_map/zoom) ( при максимальном размере
+    // карты 10, если зум равен 2 то выведится 5 символов. Если zoom  равен 3 то 3)
+    void broadcast (  unsigned char broadcast_object[max_map][max_map]){
+        for (int i = camera_pos_x ; i < camera_pos_x + max_map/zoom ; i++) {
+          for (int j = camera_pos_y; j < camera_pos_y + max_map/zoom; j++)
+                cout << broadcast_object[i][j] << ' ';
+          cout << endl;
         }
+
     }
-    void link(int coord_x, int coord_y){  //РїСЂРёРІСЏР·РєР° РєР°РјРµСЂС‹ Рє С‚РѕС‡РєРµ
+    // метод для установки позиции камеры. Символы выводятся начиная с сивмовла находящегося на позиции камеры
+    void link(int coord_x, int coord_y){  //привязка камеры к точке
         camera_pos_x = coord_x;
         camera_pos_y = coord_y;
     }
@@ -24,28 +32,44 @@ public:
 };
 ///TEST
 int main(){
-    //РўРµСЃС‚РѕРІС‹Р№ Р»Р°Р±РёСЂРёРЅС‚
-   int max_map=10;
+    //Тестовый лабиринт
+ setlocale(LC_ALL, "");
 unsigned char mapp [max_map][max_map];
  for(int i = 0; i < max_map ; i++){
     for(int j = 0; j < max_map ; j++){
         mapp[i][j]= '#';
     }
  }
-// РўРµСЃС‚РѕРІС‹Р№ СѓС‡Р°СЃС‚РѕРє РєРѕС‚РѕСЂС‹Р№ РїРѕС…РІРѕР»РёС‚ СЂР°Р·Р»РµС‡РёС‚СЊ РєР°РґСЂС‹ РєР°РјРµСЂС‹
+// Тестовый участок который поpволит разлечить кадры камеры
  for(int i = 3; i < 5 ; i++){
     for(int j = 3; j < 6 ; j++){
         mapp[i][j]= '*';
     }
  }
 
-
-
 char button = '/';
-
-
-// Р¦РёРєР» РІ РєРѕС‚РѕСЂРѕРј РІСЃС‘ РґРѕР»Р¶РЅРѕ РїСЂРѕРёСЃС…РѕРґРёС‚
+ Camera sone(3,3,3);
+int buf_x;
+int buf_y;
+// Цикл в котором всё должно происходит
 while (button != '=') {
+
+// Вывод всей карты для сравнения
+for(int i = 0; i < max_map ; i++){
+    for(int j = 0; j < max_map ; j++){
+        cout << mapp[i][j] << ' ';
+    }
+    cout<<endl;
+ }
+
+cout<<endl;
+
+   sone.broadcast(mapp);
+   cout<< "введите новую позицию"<<endl;
+   cout<<"поз_1: "; cin >> buf_x;
+   cout<<"поз_1: "; cin >> buf_y;
+   sone.link(buf_x,buf_y);
+   cout<<"выход?";
    button = (char)_getch();
    system("cls");
 
