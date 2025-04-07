@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <windows.h>
 
 using namespace std;
 
@@ -68,13 +69,13 @@ public:
 
     // Метод для отображения предмета
     void display() const {
-        cout << "  ┌───────────────────────────────────────────────────────────┐" << endl;
-        cout << "  │  Предмет: " << name << endl;
-        cout << "  │  Описание: " << description << endl;
-        cout << "  │  Сила: " << power_item << endl;
-        cout << "  │  Ловкость: " << dexterity_item << endl;
-        cout << "  │  Скорость: " << speed_item << endl;
-        cout << "  └───────────────────────────────────────────────────────────┘" << endl;
+        cout << " ----------------------------------------------|" << endl;
+        cout << " |  Предмет: " << name << endl;
+        cout << " |  Описание: " << description << endl;
+        cout << " |  Сила: " << power_item << endl;
+        cout << " |  Ловкость: " << dexterity_item << endl;
+        cout << " |  Скорость: " << speed_item << endl;
+        cout << " ----------------------------------------------| " << endl;
     }
 
     // Методы для получения характеристик предмета
@@ -83,7 +84,7 @@ public:
     float getSpeed() const { return speed_item; }
 };
 
-// Класс персонажа 
+// Класс персонажа
 class Character {
 protected:
     string name; // имя персонажа
@@ -98,7 +99,8 @@ protected:
 public:
     // Конструктор персонажа
     Character(const string& name, const string& type, float power, float dexterity, float bodytype, float intelligence, float luck)
-        : name(name), type(type), power_Character(power), dexterity_Character(dexterity), bodytype_Character(bodytype), intelligence_Character(intelligence), luck_Character(luck) {}
+        : name(name), type(type), power_Character(power), dexterity_Character(dexterity),
+         bodytype_Character(bodytype), intelligence_Character(intelligence), luck_Character(luck) {}
 
     // Метод для добавления предмета в инвентарь
     void addItem(const Item& item) {
@@ -110,15 +112,16 @@ public:
 
     // Метод для отображения информации о персонаже
     virtual void displayCharacterInfo() const {
-        cout << "┌───────────────────────────────────────────────────────────┐" << endl;
-        cout << "│  Имя персонажа: " << name << endl;
-        cout << "│  Тип: " << type << endl;
-        cout << "│  Сила: " << power_Character << endl;
-        cout << "│  Ловкость: " << dexterity_Character << endl;
-        cout << "│  Телосложение: " << bodytype_Character << endl;
-        cout << "│  Интеллект: " << intelligence_Character << endl;
-        cout << "│  Удача: " << luck_Character << endl;
-        cout << "└───────────────────────────────────────────────────────────┘" << endl;
+
+        cout << "----------------------------------------------|" << endl;
+        cout << "|  Имя персонажа: " << name << endl;
+        cout << "|  Тип: " << type << endl;
+        cout << "|  Сила: " << power_Character << endl;
+        cout << "|  Ловкость: " << dexterity_Character << endl;
+        cout << "|  Телосложение: " << bodytype_Character << endl;
+        cout << "|  Интеллект: " << intelligence_Character << endl;
+        cout << "|  Удача: " << luck_Character << endl;
+        cout << "----------------------------------------------|" << endl;
 
         cout << "Инвентарь:" << endl;
         for (const auto& item : inventory) {
@@ -185,7 +188,9 @@ Hero createHero() {
 
 // Основная функция
 int main() {
-    setlocale(LC_ALL, "Rus");
+    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     // Создание главного героя через меню
     Hero hero = createHero();

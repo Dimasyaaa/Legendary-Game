@@ -8,3 +8,5 @@ LABICA/obj/Debug/LABICA/main.o
 LABICA/obj/Debug/Labirint_PC.o
 Camera.exe
 Camera.o
+Character.o
+Character.exe
