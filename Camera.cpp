@@ -5,13 +5,13 @@ const int max_map=10;
 
 class Camera{
 private:
-    int camera_pos_x;
+    int camera_pos_x; //Позиция камеры по х и у
     int camera_pos_y;
-    int zoom;
+    int zoom;         //Величена приближения
 public:
     Camera(int coord_x, int coord_y, int zom): camera_pos_x(coord_x), camera_pos_y(coord_y), zoom(zom){}
 
-    //трансляция. Внутрь передаётся обьект трансляции - двумерный массив символов.
+    //Трансляция. Внутрь передаётся обьект трансляции - двумерный массив символов.
     //Количество выводимы символов соответствует формуле(max_map/zoom) ( при максимальном размере
     // карты 10, если зум равен 2 то выведится 5 символов. Если zoom  равен 3 то 3)
     void broadcast (  unsigned char broadcast_object[max_map][max_map]){
