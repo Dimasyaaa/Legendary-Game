@@ -70,11 +70,11 @@ public:
     // Метод для отображения предмета
     void display() const {
         cout << " ----------------------------------------------|" << endl;
-        cout << " |  Предмет: " << name << endl;
-        cout << " |  Описание: " << description << endl;
-        cout << " |  Сила: " << power_item << endl;
-        cout << " |  Ловкость: " << dexterity_item << endl;
-        cout << " |  Скорость: " << speed_item << endl;
+        cout << " |  Subject: " << name << endl;
+        cout << " |  Description: " << description << endl;
+        cout << " |  Power: " << power_item << endl;
+        cout << " |  Dexterity: " << dexterity_item << endl;
+        cout << " |  Speed: " << speed_item << endl;
         cout << " ----------------------------------------------| " << endl;
     }
 
@@ -114,16 +114,16 @@ public:
     virtual void displayCharacterInfo() const {
 
         cout << "----------------------------------------------|" << endl;
-        cout << "|  Имя персонажа: " << name << endl;
-        cout << "|  Тип: " << type << endl;
-        cout << "|  Сила: " << power_Character << endl;
-        cout << "|  Ловкость: " << dexterity_Character << endl;
-        cout << "|  Телосложение: " << bodytype_Character << endl;
-        cout << "|  Интеллект: " << intelligence_Character << endl;
-        cout << "|  Удача: " << luck_Character << endl;
+        cout << "|  Character's name: " << name << endl;
+        cout << "|  Type: " << type << endl;
+        cout << "|  Power: " << power_Character << endl;
+        cout << "|  Dexterity: " << dexterity_Character << endl;
+        cout << "|  Bodytype: " << bodytype_Character << endl;
+        cout << "|  Intelligence: " << intelligence_Character << endl;
+        cout << "|  Luck: " << luck_Character << endl;
         cout << "----------------------------------------------|" << endl;
 
-        cout << "Инвентарь:" << endl;
+        cout << "Inventory:" << endl;
         for (const auto& item : inventory) {
             item.display();
         }
@@ -134,7 +134,7 @@ public:
 
     // Метод для выполнения атаки
     void attack(const Character& enemy) const {
-        cout << name << " атакует " << enemy.getName() << "!" << endl;
+        cout << name << " attacking " << enemy.getName() << "!" << endl;
     }
 };
 
@@ -143,11 +143,11 @@ class Hero : public Character {
 public:
     // Конструктор главного героя
     Hero(const string& name, float power, float dexterity, float bodytype, float intelligence, float luck)
-        : Character(name, "Главный герой", power, dexterity, bodytype, intelligence, luck) {}
+        : Character(name, "The main character", power, dexterity, bodytype, intelligence, luck) {}
 
     // Метод для специальной атаки
     void specialAttack() const {
-        cout << name << " использует специальную атаку!" << endl;
+        cout << name << " uses a special attack!" << endl;
     }
 };
 
@@ -156,11 +156,11 @@ class Enemy : public Character {
 public:
     // Конструктор врага
     Enemy(const string& name, float power, float dexterity, float bodytype, float intelligence, float luck)
-        : Character(name, "Враг", power, dexterity, bodytype, intelligence, luck) {}
+        : Character(name, "Enemy", power, dexterity, bodytype, intelligence, luck) {}
 
     // Метод для атаки
     void attack(const Hero& hero) const {
-        cout << name << " атакует " << hero.getName() << "!" << endl;
+        cout << name << " attacking " << hero.getName() << "!" << endl;
     }
 };
 
@@ -169,44 +169,19 @@ Hero createHero() {
     string name;
     float power, dexterity, bodytype, intelligence, luck;
 
-    cout << "Введите имя главного героя: ";
+    cout << "Enter the name of the main character: ";
     cin >> name;
 
-    cout << "Введите силу: ";
+    cout << "Enter the power: ";
     cin >> power;
-    cout << "Введите ловкость: ";
+    cout << "Enter dexterity: ";
     cin >> dexterity;
-    cout << "Введите телосложение: ";
+    cout << "Enter your physique: ";
     cin >> bodytype;
-    cout << "Введите интеллект: ";
+    cout << "Enter intelligence: ";
     cin >> intelligence;
-    cout << "Введите удачу: ";
+    cout << "Enter luck: ";
     cin >> luck;
 
     return Hero(name, power, dexterity, bodytype, intelligence, luck);
-}
-
-// Основная функция
-int main() {
-    setlocale(LC_ALL, "Russian");
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
-
-    // Создание главного героя через меню
-    Hero hero = createHero();
-
-    // Отображение информации о главном герое
-    hero.displayCharacterInfo();
-
-    // Создание врагов
-    Enemy goblin("Гоблин", 30, 25, 40, 10, 5);
-
-    // Отображение информации о врагах
-    goblin.displayCharacterInfo();
-
-    // Пример использования специальных методов
-    hero.specialAttack();
-    goblin.attack(hero);
-
-    return 0;
 }
