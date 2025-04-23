@@ -24,8 +24,21 @@ public:
     }
     // метод для установки позиции камеры. Символы выводятся начиная с сивмовла находящегося на позиции камеры
     void link(int coord_x, int coord_y){  //привязка камеры к точке
-        camera_pos_x = coord_x;
-        camera_pos_y = coord_y;
+        if (((coord_x + zoom / 2) < max_map) && ((coord_y + zoom / 2) < max_map)){
+            camera_pos_x = coord_x;
+            camera_pos_y = coord_y; 
+            cout << "1YYYYYYYY";
+            cout << "1XXXXXX";
+
+        }
+        else if (((coord_x + zoom / 2) >= max_map) && ((coord_y + zoom / 2) < max_map)){
+            cout << "YYYYYYYY";
+            camera_pos_y = coord_y;
+        }
+        else if (((coord_y + zoom / 2) >= max_map) && ((coord_x + zoom / 2) < max_map)){
+            cout << "XXXXXX";
+            camera_pos_x = coord_x;
+        }
     }
 
 
@@ -73,7 +86,7 @@ cout<<endl;
    sone.link(buf_x,buf_y);
    cout<<"выход?";
    button = (char)_getch();
-   system("cls");
+   //system("cls");
 
 }
 }
