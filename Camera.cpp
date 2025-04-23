@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <algorithm>
 using namespace std;
 const int max_map=10;
 
@@ -24,21 +25,18 @@ public:
     }
     // метод для установки позиции камеры. Символы выводятся начиная с сивмовла находящегося на позиции камеры
     void link(int coord_x, int coord_y){  //привязка камеры к точке
-        if (((coord_x + zoom / 2) < max_map) && ((coord_y + zoom / 2) < max_map)){
+        if ((coord_x == clamp(coord_x, zoom / 2, max_map - 1 - zoom / 2)) && (coord_y == clamp(coord_y, zoom / 2, max_map - 1 - zoom / 2))){
             camera_pos_x = coord_x;
             camera_pos_y = coord_y; 
-            cout << "1YYYYYYYY";
-            cout << "1XXXXXX";
 
         }
-        else if (((coord_x + zoom / 2) >= max_map) && ((coord_y + zoom / 2) < max_map)){
-            cout << "YYYYYYYY";
+        else if ((coord_x != clamp(coord_x, zoom / 2, max_map - 1 - zoom / 2)) && (coord_y == clamp(coord_y, zoom / 2, max_map - 1 - zoom / 2))){
             camera_pos_y = coord_y;
         }
-        else if (((coord_y + zoom / 2) >= max_map) && ((coord_x + zoom / 2) < max_map)){
-            cout << "XXXXXX";
+        else if ((coord_x == clamp(coord_x, zoom / 2, max_map - 1 - zoom / 2)) && (coord_y != clamp(coord_y, zoom / 2, max_map - 1 - zoom / 2))){
             camera_pos_x = coord_x;
         }
+        
     }
 
 
