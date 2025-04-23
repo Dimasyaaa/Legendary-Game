@@ -14,9 +14,9 @@ public:
     //Трансляция. Внутрь передаётся обьект трансляции - двумерный массив символов.
     //Количество выводимы символов соответствует формуле(max_map/zoom) ( при максимальном размере
     // карты 10, если зум равен 2 то выведится 5 символов. Если zoom  равен 3 то 3)
-    void broadcast (  unsigned char broadcast_object[max_map][max_map]){
-        for (int i = camera_pos_x ; i < camera_pos_x + max_map/zoom ; i++) {
-          for (int j = camera_pos_y; j < camera_pos_y + max_map/zoom; j++)
+    void broadcast (  int broadcast_object[max_map][max_map]){
+        for (int i = camera_pos_x - zoom / 2 ; i < camera_pos_x + zoom; i++) {
+          for (int j = camera_pos_y - zoom /2; j < camera_pos_y + zoom; j++)
                 cout << broadcast_object[i][j] << ' ';
           cout << endl;
         }
@@ -34,21 +34,23 @@ public:
 int main(){
     //Тестовый лабиринт
  setlocale(LC_ALL, "");
-unsigned char mapp [max_map][max_map];
+ int countt=100;
+int mapp [max_map][max_map];
  for(int i = 0; i < max_map ; i++){
     for(int j = 0; j < max_map ; j++){
-        mapp[i][j]= '#';
+        mapp[i][j]= countt ;
+        countt++;
     }
  }
-// Тестовый участок который поpволит разлечить кадры камеры
- for(int i = 3; i < 5 ; i++){
-    for(int j = 3; j < 6 ; j++){
-        mapp[i][j]= '*';
-    }
- }
+//// Тестовый участок который поpволит разлечить кадры камеры
+// for(int i = 3; i < 5 ; i++){
+//    for(int j = 3; j < 6 ; j++){
+//        mapp[i][j]= '*';
+//    }
+// }
 
 char button = '/';
- Camera sone(3,3,3);
+ Camera sone(3,3,2);
 int buf_x;
 int buf_y;
 // Цикл в котором всё должно происходит
@@ -65,7 +67,7 @@ for(int i = 0; i < max_map ; i++){
 cout<<endl;
 
    sone.broadcast(mapp);
-   cout<< "введите новую позицию"<<endl;
+   cout<< "New"<<endl;
    cout<<"поз_1: "; cin >> buf_x;
    cout<<"поз_1: "; cin >> buf_y;
    sone.link(buf_x,buf_y);
