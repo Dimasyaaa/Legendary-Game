@@ -8,26 +8,44 @@ using namespace std;
 
 int currentColor = 0;
 
-void startGame() {
-    cout << "The game has started!" << endl;
-    // BEST GAME EVER!!!
+void initGame()
+{
+    cout << "Игра началась!" << endl;
+    string username;
+    cout << "Введите имя: " << endl;
+    cin >> username;
+    ofstream out("data/records.txt", ios::app);
+    if (out.is_open())
+    {
+        out << username << " ";
+    }
+    out.close();
+    // TODO записывать имя в конфиг
+    //  BEST GAME EVER!!!
 }
 
-void showScores() {
-    cout << "Records:" << endl;
-    // Таблица рекордов
+void showScores()
+{
+    cout << "Рекорды:" << endl;
+    // TODO Таблица рекордов
 }
 
-void showSettings() {
-    cout << "Settings:" << endl;
+void showSettings()
+{
+    cout << "Настройки:" << endl;
+    
+    // TODO выбор настроек, 
+    //changeColor();
     // Здесь мы пропишем настроечки
 }
 
-void changeColor() {
+void changeColor()
+{
     cout << "Select the text color (0 - normal, 1 - red, 2 - green, 3 - blue):";
     cin >> currentColor;
 
-    switch (currentColor) {
+    switch (currentColor)
+    {
     case 0:
         cout << "\033[0m"; // Нормальный цвет
         break;
@@ -47,58 +65,43 @@ void changeColor() {
     }
 }
 
-void showMenu() {
+void showMenu()
+{
     cout << "===== LABICA =====" << endl;
-    cout << "1. Start the game" << endl;
-    cout << "2. Records" << endl;
-    cout << "3. Settings" << endl;
-    cout << "4. Exit" << endl;
+    cout << "1. Начать игру" << endl;
+    cout << "2. Рекорды" << endl;
+    cout << "3. Настройки" << endl;
+    cout << "4. Выход" << endl;
 }
 
-int main1() {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
-    setlocale(LC_ALL, "Rus");
-
+int runMenu()
+{
     int choice;
 
-    bool flag = true;
-    while (flag){
+    while (true)
+    {
         showMenu();
-        cout << "Select an option (1-4): ";
-
+        cout << "Выбрать опцию (1-4): ";
         cin >> choice;
-        switch (choice) {
+        switch (choice)
+        {
         case 1:
-            startGame();
-            {
-            string username;
-            cout << "Enter your name: " << endl;
-            cin >> username;
-            ofstream out("IDEA/records.txt", ios::app);
-            if (out.is_open()) {
-                    out << username << " ";
-                }
-                out.close();
-            }
-            break;
+            initGame();
+            return 1;
         case 2:
             showScores();
             break;
         case 3:
             showSettings();
-            changeColor();
             break;
         case 4:
-            cout << "Exit the game..." << endl;
-            flag = false;
-            break;
+            cout << "Выход из игры..." << endl;
+            return 0;
         default:
-            cout << "Wrong choice, try again." << endl;
+            cout << "Неверный выбор, дубина!" << endl;
         }
 
+        // TODO очистка экрана
         cout << endl; // Для удобства
     }
-
-    return 0;
 }
