@@ -1,8 +1,4 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <locale.h>
-#include <windows.h>
+#include "Menu.hpp"
 
 using namespace std;
 

@@ -219,7 +219,7 @@ private:
     }
 };
 
-int main() {
+int main1() {
 
     Game game;
     game.run();

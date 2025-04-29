@@ -1,6 +1,3 @@
-LABICA/*
-*.o
-*.exe
 .vscode
-data/*
-config/*
+bin/
+gamedata/
