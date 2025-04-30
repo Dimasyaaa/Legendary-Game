@@ -1,5 +1,8 @@
 #include "Menu.hpp"
+#include <filesystem>
+#include <fstream>
 
+namespace fs = std::filesystem;
 using namespace std;
 
 int currentColor = 0;
@@ -10,14 +13,16 @@ void initGame()
     string username;
     cout << "Введите имя: " << endl;
     cin >> username;
-    ofstream out("gamedata/records.txt", ios::app);
-    if (out.is_open())
-    {
-        out << username << " ";
+    fs::current_path(fs::current_path().parent_path());
+    fs::path dirPath = fs::current_path() / "gamedata";
+    if (!fs::exists(dirPath)) {
+        fs::create_directory(dirPath);
     }
-    out.close();
-    // TODO записывать имя в конфиг
-    //  BEST GAME EVER!!!
+    fs::current_path(dirPath);
+    fs::path filePath = dirPath / "config.txt";
+    ofstream file(filePath, ios::app);
+    file << username << endl;
+    file.close();
 }
 
 void showScores()
@@ -48,7 +53,7 @@ void showScores()
     // Верхняя граница таблицы
     cout << "╔" << string(nameWidth + 2, '=') << "╗" << endl;
 
-    
+
 
     // Нижняя граница таблицы
     cout << "╚" << string(nameWidth + 2, '=') << "╩" << string(scoreWidth + 2, '=') << "╝" << endl;
