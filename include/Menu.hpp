@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <filesystem>
+#include <fstream>
 
 void initGame();
 void showScores();

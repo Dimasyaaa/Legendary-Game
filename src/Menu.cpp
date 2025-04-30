@@ -1,6 +1,4 @@
 #include "Menu.hpp"
-#include <filesystem>
-#include <fstream>
 
 namespace fs = std::filesystem;
 using namespace std;
@@ -52,8 +50,9 @@ void showScores()
 
     // Верхняя граница таблицы
     cout << "╔" << string(nameWidth + 2, '=') << "╗" << endl;
-
-
+    
+    // Заголовок
+    cout << "║ " << left << setw(nameWidth) << "Name" << " ║ " << right << setw(scoreWidth) << "Result" << " ║" << endl;
 
     // Нижняя граница таблицы
     cout << "╚" << string(nameWidth + 2, '=') << "╩" << string(scoreWidth + 2, '=') << "╝" << endl;
