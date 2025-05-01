@@ -25,18 +25,36 @@ void initGame()
 
 void showScores()
 {
-    vector<pair<string, double>> records = {
-        {"Alice Johnson", 95.50},
-        {"Bob Smith", 82.30},
-        {"Charlie Brown", 76.80},
-        {"Diana Prince", 99.99},
-        {"Ethan Hunt", 65.45},
-        {"Fiona Gallagher", 88.20},
-        {"George Washington", 72.10}
-    };
+    vector<pair<string, double>> records;
+    fs::current_path(fs::current_path().parent_path());
+    fs::path dirPath = fs::current_path() / "gamedata";
+    if (!fs::exists(dirPath)) {
+        fs::create_directory(dirPath);
+    }
+    fs::current_path(dirPath);
+    fs::path filePath = dirPath / "records.txt";
+    ifstream file(filePath, ios::app);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << "records.txt" << endl;
+        return;
+    }
+    string line;
+    while (getline(file, line)) {
+        size_t delimiterPos = line.find('|');
+        if (delimiterPos != string::npos) {
+            string name = line.substr(0, delimiterPos);
+            string scoreStr = line.substr(delimiterPos + 1);
+            
+            try {
+                double score = stod(scoreStr);
+                records.emplace_back(name, score);
+            } catch (...) {
+                cerr << "Warning: Invalid score format in line: " << line << endl;
+            }
+        }
+    }
+    file.close();
 
-    cout << "Рекорды:" << endl;
-    
     size_t maxNameLength = 4; // Минимум для заголовка "Имя"
     size_t maxScoreLength = 6; // Минимум для заголовка "Результат"
 
@@ -49,13 +67,48 @@ void showScores()
     const int scoreWidth = static_cast<int>(maxScoreLength);
 
     // Верхняя граница таблицы
-    cout << "╔" << string(nameWidth + 2, '=') << "╗" << endl;
-    
+    cout << "╔";
+    for (int i = 0; i < nameWidth + 2; i++) 
+        cout << "═";
+    cout << "╦";
+    for (int i = 0; i < scoreWidth + 2; i++) 
+        cout << "═";
+    cout << "╗" << endl;
+
     // Заголовок
-    cout << "║ " << left << setw(nameWidth) << "Name" << " ║ " << right << setw(scoreWidth) << "Result" << " ║" << endl;
+    cout << "║ " << left << setw(nameWidth) << "Имя" << "    ║ " << right << setw(scoreWidth) << "Рекорд" << "    ║" << endl;
+
+     // Разделительная линия
+    cout << "╠";
+    for (int i = 0; i < nameWidth + 2; i++) 
+        cout << "═";
+    cout << "╬";
+    for (int i = 0; i < scoreWidth + 2; i++) 
+        cout << "═";
+    cout << "╣" << endl;
+
+
+    for (int i = 0; i < records.size(); i++) {
+        cout << "║ \033[1;36m" << left << setw(nameWidth) << records[i].first << "\033[0m ║ " << right << setw(scoreWidth);
+        if (records[i].second >= 90) {
+            cout << "\033[1;32m"; // Ярко-зеленый для высоких результатов
+        } else if (records[i].second >= 70) {
+            cout << "\033[1;33m"; // Ярко-желтый
+        } else {
+            cout << "\033[1;31m"; // Ярко-красный
+        }
+        cout << fixed << setprecision(2) << records[i].second << "\033[0m   ║";
+        cout << endl;
+    }
 
     // Нижняя граница таблицы
-    cout << "╚" << string(nameWidth + 2, '=') << "╩" << string(scoreWidth + 2, '=') << "╝" << endl;
+    cout << "╚";
+    for (int i = 0; i < nameWidth + 2; i++) 
+        cout << "═";
+    cout << "╩";
+    for (int i = 0; i < scoreWidth + 2; i++) 
+        cout << "═";
+    cout << "╝" << endl;
 }
 
 void showSettings()
