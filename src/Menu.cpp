@@ -167,22 +167,25 @@ int runMenu()
         switch (choice)
         {
         case 1:
+            system("cls");
             initGame();
             return 1;
         case 2:
+            system("cls");
             showScores();
             break;
         case 3:
+            system("cls");
             showSettings();
             break;
         case 4:
             cout << "Выход из игры..." << endl;
             return 0;
         default:
+            system("cls");
             cout << "Неверный выбор, дубина!" << endl;
         }
-
-        // TODO очистка экрана
+        
         cout << endl; // Для удобства
     }
 }
