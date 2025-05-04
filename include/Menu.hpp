@@ -1,13 +1,11 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <locale.h>
-#include <windows.h>
-#include <vector>
-#include <string>
-#include <iomanip>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <locale.h>
+#include <string>
+#include <vector>
+#include <windows.h>
 
 void initGame();
 void showScores();
