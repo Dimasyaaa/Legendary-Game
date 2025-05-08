@@ -1,7 +1,7 @@
 CXX       := g++
-CXX_FLAGS := -std=c++17 -ggdb
+CXX_FLAGS := -std=c++20 -ggdb
 
-BIN     := bin
+BIN     := 
 SRC     := src
 INCLUDE := include
 DOCS    := docs
@@ -32,27 +32,27 @@ ifeq ("$(wildcard $(FILES)\$(RECORDS))","")
 endif
 	cls
 
-all: $(BIN)\$(EXECUTABLE)
+all: $(EXECUTABLE)
 
 build: init clean all
 
 build-run: init clean all
-	.\$(BIN)\$(EXECUTABLE)
+	.\$(EXECUTABLE)
 
 run:
 ifneq ("$(wildcard $(BIN)\$(EXECUTABLE))","")
 	cls
-	-.\$(BIN)\$(EXECUTABLE)
+	-.\$(EXECUTABLE)
 else
 	@echo "make build" first
 endif
 
-$(BIN)\$(EXECUTABLE): $(SRC)/*.cpp
+$(EXECUTABLE): $(SRC)/*.cpp
 	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES) 
 
 menu: $(SRC)/Labika.cpp $(SRC)/Menu.cpp
-	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
+	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $(EXECUTABLE) $(LIBRARIES)
 
 clean:
-	-del $(BIN)\$(EXECUTABLE)
+	-del $(EXECUTABLE)
 	cls

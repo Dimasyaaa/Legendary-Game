@@ -1,6 +1,4 @@
-#include <iostream>
-#include <windows.h>
-
+#include "Labika.hpp"
 #include "Menu.hpp"
 
 int main() {
@@ -15,7 +13,4 @@ int main() {
   case 0:
     return 0;
   }
-
-  // проверка юникода
-  std::cout << "°dfghgiusdfgпиываылвиаойъ α";
 }
