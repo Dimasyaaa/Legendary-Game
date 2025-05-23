@@ -16,10 +16,8 @@ EXECUTABLE  := Labika.exe
 init: create-dirs create-files
 
 create-dirs:
-	-mkdir $(BIN)
 	-mkdir $(FILES)
 	-mkdir $(DOCS)
-	cls
 
 create-files: create-dirs
 ifeq ("$(wildcard $(FILES)\$(CONFIG))","")
@@ -30,7 +28,6 @@ endif
 ifeq ("$(wildcard $(FILES)\$(RECORDS))","")
 	-. > $(FILES)\$(RECORDS)
 endif
-	cls
 
 all: $(EXECUTABLE)
 
@@ -41,7 +38,6 @@ build-run: init clean all
 
 run:
 ifneq ("$(wildcard $(BIN)\$(EXECUTABLE))","")
-	cls
 	-.\$(EXECUTABLE)
 else
 	@echo "make build" first

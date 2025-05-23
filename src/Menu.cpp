@@ -67,15 +67,13 @@ void showScores() {
 
   for (const auto &record : records) {
     maxNameLength = std::max(maxNameLength, record.first.length());
-    maxScoreLength =
-        std::max(maxScoreLength, std::to_string(record.second).length());
+    maxScoreLength = std::max(
+        maxScoreLength,
+        std::to_string(static_cast<int>(record.second * 100)).length() + 1);
   }
 
   const int nameWidth = static_cast<int>(maxNameLength);
   const int scoreWidth = static_cast<int>(maxScoreLength);
-
-  std::cout << nameWidth << maxNameLength << scoreWidth << maxScoreLength
-            << std::endl;
 
   // Верхняя граница таблицы
   std::cout << "╔";
