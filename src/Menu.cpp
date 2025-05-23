@@ -54,7 +54,7 @@ void showScores() {
   }
   f_in.close();
 
-  int nameWidth = 10;  // Минимум для заголовка "Имя"
+  int nameWidth = 10; // Минимум для заголовка "Имя"
   int scoreWidth = 7; // Минимум для заголовка "Рекорд"
 
   for (const auto &record : records) {
@@ -62,7 +62,6 @@ void showScores() {
       nameWidth = record.first.length();
   }
 
-  std::cout << nameWidth << " " << scoreWidth << std::endl;
   // Верхняя граница таблицы
   std::cout << "╔";
   for (int i = 0; i < nameWidth + 2; i++)
@@ -90,9 +89,8 @@ void showScores() {
     std::cout << "║ \033[1;36m" << std::left << std::setw(nameWidth)
               << records[i].first;
     std::cout << "\033[0m" << " ║ " << std::right << std::setw(scoreWidth);
-    
-    std::cout << records[i].second
-              << "\033[0m ║" << std::endl;
+
+    std::cout << records[i].second << "\033[0m ║" << std::endl;
   }
 
   // Нижняя граница таблицы
