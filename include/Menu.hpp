@@ -1,21 +1,57 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <locale.h>
+#include <windows.h>
+#include <vector>
+#include <string>
+#include <iomanip>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <locale.h>
-#include <string>
-#include <vector>
-#include <windows.h>
-
-using namespace std::string_literals;
-
-// @warning вот тут настраивается конфиг. При изменении требуются обновления
+/**
+ * @brief Иницилизация игры
+ * 
+ * В этой функции осуществляется создание дирректории gamedata, в которой создается файл config.ini.
+ * В файл записываются имя игрока и цвет игры.
+ */
 void initGame();
-
+/**
+ * @brief Вывод рекордов
+ * 
+ * В этой функции осуществляется вывод из файлика records.txt в консоль всех рекордов.
+ */
 void showScores();
+/**
+ * @brief Вывод настроек
+ * 
+ * Вывод функции для смены цвета игры.
+ */
 void showSettings();
-
-// @todo заменить текст на русский. Ввести константы цветов
+/**
+ * @brief Изменение цвета
+ * 
+ * Функция для изменения цвета игры. 
+ * На выбор дается 4 цвета:
+ * 1. Белый на черном фоне
+ * 2. Красный на черном фоне
+ * 3. Зеленый на черном фоне
+ * 4. Синий на черном фоне
+ */
 void changeColor();
+/**
+ * @brief Вывод пунктов меню в консоль
+ * 
+ * Вывод меню на экран с последующей возможность выбора 1 из 4 пунктов:
+ * 1. Начать игру
+ * 2. Рекорды
+ * 3. Настройки
+ * 4. Выход
+ */
 void showMenu();
+/**
+ * @brief Выбор пунктов меню
+ * 
+ * Ввод пользователем одного из пунктов пеню.
+ * Далее программа запускает соответствующие функции под каждый пункт.
+ */
 int runMenu();
