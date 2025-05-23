@@ -85,8 +85,8 @@ void showScores() {
   std::cout << "╗" << std::endl;
 
   // Заголовок
-  std::cout << "║ " << std::left << std::setw(nameWidth) << "Имя"s << " ║ "
-            << std::right << std::setw(scoreWidth) << "Рекорд"s << " ║"
+  std::cout << "║ " << std::left << std::setw(nameWidth) << "Имя" << " ║ "
+            << std::right << std::setw(scoreWidth) << "Рекорд" << " ║"
             << std::endl;
 
   // Разделительная линия
