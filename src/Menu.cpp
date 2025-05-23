@@ -27,10 +27,8 @@ void initGame() {
 }
 
 void showScores() {
-  std::vector<std::pair<std::string, double>> records;
+  std::vector<std::pair<std::string, std::string>> records;
   std::string line;
-  const int HIGH_RESULT = 90;
-  const int MIDDLE_RESULT = 70;
 
   std::filesystem::create_directory("gamedata");
   std::ifstream f_in("gamedata\\records.txt", std::ios::in);
@@ -44,10 +42,9 @@ void showScores() {
     size_t delimiterPos = line.find('|');
     if (delimiterPos != std::string::npos) {
       std::string name = line.substr(0, delimiterPos);
-      std::string scoreStr = line.substr(delimiterPos + 1);
+      std::string score = line.substr(delimiterPos + 1);
 
       try {
-        double score = stod(scoreStr);
         records.emplace_back(name, score);
       } catch (...) {
         std::cerr << "Неправильный формат рекорда в строке № " << line
@@ -57,26 +54,15 @@ void showScores() {
   }
   f_in.close();
 
-  if (!records.size()) {
-    std::cout << "Рекордов ещё нет!" << std::endl;
-    return;
-  }
-
-  size_t maxNameLength = 3;  // Минимум для заголовка "Имя"
-  size_t maxScoreLength = 6; // Минимум для заголовка "Рекорд"
+  int nameWidth = 10;  // Минимум для заголовка "Имя"
+  int scoreWidth = 7; // Минимум для заголовка "Рекорд"
 
   for (const auto &record : records) {
-    maxNameLength = std::max(maxNameLength, record.first.length());
-    maxScoreLength =
-        std::max(maxScoreLength, std::to_string(record.second).length());
+    if (record.first.length() > 10)
+      nameWidth = record.first.length();
   }
 
-  const int nameWidth = static_cast<int>(maxNameLength);
-  const int scoreWidth = static_cast<int>(maxScoreLength);
-
-  std::cout << nameWidth << maxNameLength << scoreWidth << maxScoreLength
-            << std::endl;
-
+  std::cout << nameWidth << " " << scoreWidth << std::endl;
   // Верхняя граница таблицы
   std::cout << "╔";
   for (int i = 0; i < nameWidth + 2; i++)
@@ -87,8 +73,8 @@ void showScores() {
   std::cout << "╗" << std::endl;
 
   // Заголовок
-  std::cout << "║ " << std::left << std::setw(nameWidth) << "Имя"s << " ║ "
-            << std::right << std::setw(scoreWidth) << "Рекорд"s << " ║"
+  std::cout << "║ " << std::left << std::setw(nameWidth + 3) << "Имя " << " ║ "
+            << std::right << std::setw(scoreWidth) << "Рекорд " << " ║"
             << std::endl;
 
   // Разделительная линия
@@ -103,16 +89,9 @@ void showScores() {
   for (int i = 0; i < records.size(); i++) {
     std::cout << "║ \033[1;36m" << std::left << std::setw(nameWidth)
               << records[i].first;
-    std::cout << "\033[0m ║ " << std::right << std::setw(scoreWidth);
-
-    if (records[i].second >= HIGH_RESULT) {
-      std::cout << "\033[1;32m"; // Ярко-зеленый для высоких результатов
-    } else if (records[i].second >= MIDDLE_RESULT) {
-      std::cout << "\033[1;33m"; // Ярко-желтый
-    } else {
-      std::cout << "\033[1;31m"; // Ярко-красный
-    }
-    std::cout << std::fixed << std::setprecision(2) << records[i].second
+    std::cout << "\033[0m" << " ║ " << std::right << std::setw(scoreWidth);
+    
+    std::cout << records[i].second
               << "\033[0m ║" << std::endl;
   }
 
