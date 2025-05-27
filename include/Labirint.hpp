@@ -16,6 +16,10 @@ private:
 
 public:
   Game();
+  /**
+   * @brief 
+   *  Это мой первый коммент)
+   */
   void run();
 
 private:
