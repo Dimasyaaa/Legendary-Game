@@ -1,5 +1,10 @@
-//              Игра ЛАБИКИ
-//  Авторы: Вся команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
+/**
+ * @file Labirint.cpp
+ * @brief Реализация игры "Лабика"
+ * @author Команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
+ * @date 29.05.2025
+ * @bug При быстром движении возможны артефакты отрисовки
+ */
 
 #include "Labirint.hpp"
 #include <cctype>
@@ -13,199 +18,273 @@
 
 using namespace std;
 
-// рандомное зерно для генераций
-random_device rd;
+random_device rd; ///< Генератор случайных чисел
 
-// функция переносса курсора на заданную позицию
+// Реализация gotoxy
 void gotoxy(int y, int x) {
-  COORD coord;
-  coord.X = x;
-  coord.Y = y;
-  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-unsigned char map_symbol = 219;
+// ==================== КОНСТАНТЫ ДЛЯ КОРРЕКТНОГО ОТОБРАЖЕНИЯ ====================
+const char WALL_SYMBOL = '#';      ///< Символ для стен
+const char PLAYER_SYMBOL = '@';    ///< Символ игрока
+const char TREASURE_SYMBOL = '$';  ///< Символ сокровища
+const char PATH_SYMBOL = '.';      ///< Символ для путей
+const char FOG_SYMBOL = '?';       ///< Символ тумана войны
+
+// ==================== РЕАЛИЗАЦИЯ МЕТОДОВ КЛАССА GAME ====================
 
 Game::Game()
-    : player_posX(1), player_posY(1), treasureSymbol(253), playerSymbol(245),
-      isRunning(true) {
-  initializeMap();
-  generateMap();
-  placeTreasure();
+    : player_posX(1), player_posY(1), treasure_X(0), treasure_Y(0), 
+      treasureSymbol(TREASURE_SYMBOL), playerSymbol(PLAYER_SYMBOL), isRunning(true) {
+    
+    // Установка кодовой страницы для корректного отображения
+    SetConsoleOutputCP(CP_UTF8);
+    
+    // Инициализация карт
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            map[i][j] = WALL_SYMBOL;
+            visitedMap[i][j] = false;
+            visibilityMap[i][j] = false;
+        }
+    }
+    
+    // Генерация лабиринта
+    generateMap();
+    
+    // Размещение сокровища
+    placeTreasure();
+    
+    // Возврат игрока на стартовую позицию
+    player_posX = 1;
+    player_posY = 1;
+    map[player_posX][player_posY] = PATH_SYMBOL;
+    visitedMap[player_posX][player_posY] = true;
+    updateVisibility();
 }
 
 void Game::run() {
-  displayMap();
-  while (isRunning) {
-    //            displayMap();
-    handleInput();
-  }
+    displayMap();
+    while (isRunning) {
+        handleInput();
+    }
 }
 
-// Метод для инициализации карты
-void Game::initializeMap() {
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-      map[i][j] = map_symbol; // Заполнение карты границами
-    }
-  }
-  map[player_posX][player_posY] =
-      playerSymbol; // Установка начальной позиции игрока
-}
-// метод для вывода карты в консоль
 void Game::displayMap() {
-  system("cls");
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++)
-      cout << map[i][j];
-    cout << endl;
-  }
+    system("cls");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            // Видимая область
+            if (visibilityMap[i][j]) {
+                // Позиция игрока
+                if (i == player_posX && j == player_posY) {
+                    SetConsoleTextAttribute(hConsole, 15);
+                    cout << playerSymbol;
+                }
+                // Позиция сокровища
+                else if (i == treasure_X && j == treasure_Y) {
+                    SetConsoleTextAttribute(hConsole, 14);
+                    cout << treasureSymbol;
+                }
+                // Стены
+                else if (map[i][j] == WALL_SYMBOL) {
+                    SetConsoleTextAttribute(hConsole, 15);
+                    cout << WALL_SYMBOL;
+                }
+                // Пути
+                else {
+                    SetConsoleTextAttribute(hConsole, 15);
+                    cout << PATH_SYMBOL;
+                }
+            }
+            // Посещенные, но невидимые области
+            else if (visitedMap[i][j]) {
+                // Стены
+                if (map[i][j] == WALL_SYMBOL) {
+                    SetConsoleTextAttribute(hConsole, 8);
+                    cout << WALL_SYMBOL;
+                }
+                // Пути
+                else {
+                    SetConsoleTextAttribute(hConsole, 8);
+                    cout << PATH_SYMBOL;
+                }
+            }
+            // Неизведанные области
+            else {
+                SetConsoleTextAttribute(hConsole, 8);
+                cout << FOG_SYMBOL;  // Исправлено
+            }
+        }
+        cout << endl;
+    }
+    SetConsoleTextAttribute(hConsole, 7);
 }
 
 void Game::handleInput() {
-  char button = (char)_getch();
-  if (button == '=') {
-    isRunning = false; // Выход из игры
-    return;
-  }
-  gotoxy(player_posX, player_posY);
-  cout << ' ';
-  map[player_posX][player_posY] =
-      ' '; // Убираем символ игрока с текущей позиции
+    char button = (char)_getch();
+    if (button == '=') {
+        isRunning = false;
+        return;
+    }
+    
+    int newX = player_posX;
+    int newY = player_posY;
 
-  // Обработка перемещения игрока
-  if ((button == 'd' || button == 'D') &&
-      map[player_posX][player_posY + 1] != map_symbol) {
-    player_posY++;
-  } else if ((button == 'a' || button == 'A') &&
-             map[player_posX][player_posY - 1] != map_symbol) {
-    player_posY--;
-  } else if ((button == 's' || button == 'S') &&
-             map[player_posX + 1][player_posY] != map_symbol) {
-    player_posX++;
-  } else if ((button == 'w' || button == 'W') &&
-             map[player_posX - 1][player_posY] != map_symbol) {
-    player_posX--;
-  }
+    // Определение нового положения
+    if ((button == 'd' || button == 'D') && player_posY < m - 1) {
+        newY++;
+    } 
+    else if ((button == 'a' || button == 'A') && player_posY > 0) {
+        newY--;
+    } 
+    else if ((button == 's' || button == 'S') && player_posX < n - 1) {
+        newX++;
+    } 
+    else if ((button == 'w' || button == 'W') && player_posX > 0) {
+        newX--;
+    }
 
-  gotoxy(player_posX, player_posY);
-  cout << playerSymbol;
-  map[player_posX][player_posY] =
-      playerSymbol; // Установка символа игрока на новую позицию
+    // Проверка на стену
+    if (map[newX][newY] != WALL_SYMBOL) {
+        player_posX = newX;
+        player_posY = newY;
+        visitedMap[player_posX][player_posY] = true;
+        updateVisibility();
+        displayMap();
+    }
+    else {
+        visitedMap[newX][newY] = true;
+        updateVisibility();
+        displayMap();
+    }
 
-  // Проверка на победу
-  if (player_posX == treasure_X && player_posY == treasure_Y) {
-    gotoxy(n, 1);
-    cout << "You found a treasure!" << endl;
-    isRunning = false;
-  }
+    // Проверка на победу
+    if (player_posX == treasure_X && player_posY == treasure_Y) {
+        gotoxy(n, 0);
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+        cout << "You found the treasure! Press any key to exit.";
+        _getch();
+        isRunning = false;
+    }
 }
 
 void Game::generateMap() {
-  // флаг очистки всех четных клеток (x и y четные числа)
-  bool flag_end = false;
+    bool flag_end = false;
+    int count = 0;
+    int chet_pos = count_chet();
+    
+    // Используем отдельные координаты для генерации
+    int tractorX = 1;
+    int tractorY = 1;
+    
+    // Начальная позиция для генерации
+    map[tractorX][tractorY] = PATH_SYMBOL;  // Исправлено
+    
+    while (!flag_end) {
+        // Прокладываем пути
+        for (int i = 0; i < n * m; i++) {
+            tractor_trail(tractorX, tractorY);
+        }
 
-  int count = 0;
-  int chet_pos = count_chet();
-  while (!flag_end) {
-    // провека четных клеток на пустоту
-    for (int i = 0; i < n * m; i++)
-      tractor_trail();
-
-    for (int i = 1; i < n; i += 2) {
-      for (int j = 1; j < m; j += 2) {
-        if (map[i][j] == ' ')
-          count++;
-      }
+        // Проверка завершения генерации
+        for (int i = 1; i < n; i += 2) {
+            for (int j = 1; j < m; j += 2) {
+                if (map[i][j] == PATH_SYMBOL) count++;  // Исправлено
+            }
+        }
+        
+        if (count == chet_pos) flag_end = true;
+        else count = 0;
     }
-    if (count == chet_pos)
-      flag_end = true;
-
-    count = 0;
-  }
 }
 
 int Game::count_chet() {
-  int count_x = 0;
-  int count_y = 0;
+    int count_x = 0;
+    int count_y = 0;
 
-  // Считаем количество четных ячеек
-  for (int x = 2; x < n; x += 2)
-    count_x++;
-  for (int y = 2; y < m; y += 2)
-    count_y++;
+    for (int x = 2; x < n; x += 2) 
+        count_x++;
+    for (int y = 2; y < m; y += 2) 
+        count_y++;
 
-  return count_x * count_y; // Возвращаем общее количество четных ячеек
+    return count_x * count_y;
 }
 
 void Game::placeTreasure() {
-  treasure_X = n - 1 - player_posX;
-  treasure_Y = m - 1 - player_posY;
-  map[treasure_X][treasure_Y] = treasureSymbol; // Помещение сокровища на карту
+    treasure_X = n - 2;
+    treasure_Y = m - 2;
+    map[treasure_X][treasure_Y] = treasureSymbol;
 }
 
-void Game::tractor_trail() {
-  // Записывает рандомное в vect рандомное число от 1 до 4
-  int vect; // Изменено на int, так как используется для выбора кейса
-  mt19937 gen(rd() + time(NULL));
-  uniform_int_distribution<> dist(1, 4);
-  vect = dist(gen);
-  switch (vect) {
-  case 1: {
-    if ((player_posX > 1) &&
-        (map[player_posX - 2][player_posY] == map_symbol)) {
-      player_posX--;
-      map[player_posX + 1][player_posY] = ' ';
-      player_posX--;
-      map[player_posX + 1][player_posY] = ' ';
-    } else {
-      if (player_posX > 1) {
-        player_posX = player_posX - 2;
-        map[player_posX + 2][player_posY] = ' ';
-      }
+void Game::tractor_trail(int& tractorX, int& tractorY) {
+    mt19937 gen(rd() + time(NULL));
+    uniform_int_distribution<> dist(1, 4);
+    int vect = dist(gen);
+    
+    switch (vect) {
+    case 1: // Вверх
+        if (tractorX > 1 && map[tractorX - 2][tractorY] == WALL_SYMBOL) {
+            map[tractorX - 1][tractorY] = PATH_SYMBOL;  // Исправлено
+            map[tractorX - 2][tractorY] = PATH_SYMBOL;  // Исправлено
+            tractorX -= 2;
+        }
+        break;
+    case 2: // Вправо
+        if (tractorY < m - 2 && map[tractorX][tractorY + 2] == WALL_SYMBOL) {
+            map[tractorX][tractorY + 1] = PATH_SYMBOL;  // Исправлено
+            map[tractorX][tractorY + 2] = PATH_SYMBOL;  // Исправлено
+            tractorY += 2;
+        }
+        break;
+    case 3: // Вниз
+        if (tractorX < n - 2 && map[tractorX + 2][tractorY] == WALL_SYMBOL) {
+            map[tractorX + 1][tractorY] = PATH_SYMBOL;  // Исправлено
+            map[tractorX + 2][tractorY] = PATH_SYMBOL;  // Исправлено
+            tractorX += 2;
+        }
+        break;
+    case 4: // Влево
+        if (tractorY > 1 && map[tractorX][tractorY - 2] == WALL_SYMBOL) {
+            map[tractorX][tractorY - 1] = PATH_SYMBOL;  // Исправлено
+            map[tractorX][tractorY - 2] = PATH_SYMBOL;  // Исправлено
+            tractorY -= 2;
+        }
+        break;
     }
-  } break;
-  case 2: {
-    if ((player_posY < m - 2) &&
-        (map[player_posX][player_posY + 2] == map_symbol)) {
-      player_posY++;
-      map[player_posX][player_posY - 1] = ' ';
-      player_posY++;
-      map[player_posX][player_posY - 1] = ' ';
-    } else {
-      if (player_posY < m - 2) {
-        player_posY = player_posY + 2;
-        map[player_posX][player_posY - 2] = ' ';
-      }
+}
+
+void Game::updateVisibility() {
+    // Сброс текущей видимости
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            visibilityMap[i][j] = false;
+        }
     }
-  } break;
-  case 3: {
-    if ((player_posX < n - 2) &&
-        (map[player_posX + 2][player_posY] == map_symbol)) {
-      player_posX++;
-      map[player_posX - 1][player_posY] = ' ';
-      player_posX++;
-      map[player_posX - 1][player_posY] = ' ';
-    } else {
-      if (player_posX < n - 2) {
-        player_posX = player_posX + 2;
-        map[player_posX - 2][player_posY] = ' ';
-      }
+
+    // Установка видимости в радиусе 2 клеток
+    for (int dx = -2; dx <= 2; dx++) {
+        for (int dy = -2; dy <= 2; dy++) {
+            int nx = player_posX + dx;
+            int ny = player_posY + dy;
+            
+            if (nx >= 0 && nx < n && ny >= 0 && ny < m) {
+                visibilityMap[nx][ny] = true;
+                
+                // Помечаем видимые полы как посещенные
+                if (map[nx][ny] == PATH_SYMBOL) {  // Исправлено
+                    visitedMap[nx][ny] = true;
+                }
+            }
+        }
     }
-  } break;
-  case 4: {
-    if ((player_posY > 1) &&
-        (map[player_posX][player_posY - 2] == map_symbol)) {
-      player_posY--;
-      map[player_posX][player_posY + 1] = ' ';
-      player_posY--;
-      map[player_posX][player_posY + 1] = ' ';
-    } else {
-      if (player_posY > 1) {
-        player_posY = player_posY - 2;
-        map[player_posX][player_posY + 2] = ' ';
-      }
-    }
-  } break;
-  }
+    
+    // Всегда видим текущую позицию игрока
+    visibilityMap[player_posX][player_posY] = true;
 }

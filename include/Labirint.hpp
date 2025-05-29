@@ -1,37 +1,104 @@
+/**
+ * @file Labirint.hpp
+ * @brief Заголовочный файл "Лабика"
+ * @author Команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
+ * @date 29.05.2025
+ * @bug При быстром движении возможны артефакты отрисовки
+ */
+
+#ifndef LABIRINT_HPP
+#define LABIRINT_HPP
+
+/**
+ * @brief Переносит курсор в указанную позицию консоли
+ * @param y Координата Y (строка)
+ * @param x Координата X (столбец)
+ */
 void gotoxy(int y, int x);
 
-const int n = 25; // Высота карты
-const int m = 25; // Ширина карты
+const int n = 25; // Высота игровой карты
+const int m = 25; // Ширина игровой карты
 
+/**
+ * @class Game
+ * @brief Основной класс игры, реализующий логику лабиринта
+ * 
+ * Класс содержит карту лабиринта, позиции игрока, сокровища,
+ * а также методы для генерации и отрисовки лабиринта.
+ */
 class Game {
 private:
-  unsigned char map[n][m]; // Карта
-  int player_posX;         // Позиция игрока по X
-  int player_posY;         // Позиция игрока по Y
-  int treasure_X;          // Позиция сокровища Х
-  int treasure_Y;          // Позиция сокровища Y
-  char treasureSymbol;     // Символ сокровища
-  char playerSymbol;       // Символ игрока
-  bool isRunning;          // Флаг для работы основного цикла игры
+    unsigned char map[n][m];   // Массив, представляющий карту лабиринта
+    bool visitedMap[n][m];     // Карта посещенных игроком клеток
+    bool visibilityMap[n][m];  // Карта текущей видимости (туман войны)
+    
+    int player_posX;           // Текущая позиция игрока по X
+    int player_posY;           // Текущая позиция игрока по Y
+    int treasure_X;            // Позиция сокровища по X
+    int treasure_Y;            // Позиция сокровища по Y
+    char treasureSymbol;       // Символ для отображения сокровища
+    char playerSymbol;         // Символ для отображения игрока
+    bool isRunning;            // Флаг активности игрового цикла
 
 public:
-  Game();
-  /**
-   * @brief 
-   *  Это мой первый коммент)
-   *  это мой второй))))
-   *  я сегодня в огне
-   */
-  void run();
+    /**
+     * @brief Конструктор класса Game
+     * 
+     * Инициализирует карту, генерирует лабиринт, размещает сокровище
+     * и устанавливает начальные позиции.
+     */
+    Game();
+    
+    /**
+     * @brief Запускает основной игровой цикл
+     */
+    void run();
 
 private:
-  // Метод для инициализации карты
-  void initializeMap();
-  // метод для вывода карты в консоль
-  void displayMap();
-  void handleInput();
-  void generateMap();
-  int count_chet();
-  void placeTreasure();
-  void tractor_trail();
+    /**
+     * @brief Инициализирует карту стенами
+     */
+    void initializeMap();
+    
+    /**
+     * @brief Отображает карту тумана войны
+     */
+    void displayMap();
+    
+    /**
+     * @brief Обрабатывает пользовательский ввод
+     */
+    void handleInput();
+    
+    /**
+     * @brief Генерирует случайный лабиринт
+     * 
+     * Использует алгоритм "трактора" для создания проходимых путей.
+     */
+    void generateMap();
+    
+    /**
+     * @brief Подсчитывает количество четных ячеек для генерации
+     * @return Количество четных ячеек на карте
+     */
+    int count_chet();
+    
+    /**
+     * @brief Размещает сокровище в противоположном углу от игрока
+     */
+    void placeTreasure();
+    
+    /**
+     * @brief Прокладывает путь в лабиринте 
+     * @param[in,out] tractorX Текущая позиция трактора по X
+     * @param[in,out] tractorY Текущая позиция трактора по Y
+     */
+    void tractor_trail(int& tractorX, int& tractorY);
+    
+    /**
+     * @brief Обновляет карту видимости вокруг игрока
+     */
+    void updateVisibility();
 };
+
+#endif // LABIRINT_HPP

@@ -1,3 +1,9 @@
+/**
+ * @file Menu.hpp
+ * @brief Файл для меню игры "Лабика"
+ * @author Команда КОДОЛАБИКИ (Куклин, Корнилов, Зайцева, Мешкова, Трунова)
+ * @date 29.05.2025
+ */
 #include <iostream>
 #include <string>
 #include <fstream>
