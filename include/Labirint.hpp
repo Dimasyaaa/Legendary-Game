@@ -16,8 +16,8 @@
  */
 void gotoxy(int y, int x);
 
-const int n = 25; // Высота игровой карты
-const int m = 25; // Ширина игровой карты
+const int n = 11; // Высота игровой карты
+const int m = 11; // Ширина игровой карты
 
 /**
  * @class Game

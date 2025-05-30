@@ -15,6 +15,7 @@
 #include <random>
 #include <time.h>
 #include <windows.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -176,32 +177,64 @@ void Game::handleInput() {
 }
 
 void Game::generateMap() {
-    bool flag_end = false;
-    int count = 0;
-    int chet_pos = count_chet();
-    
-    // Используем отдельные координаты для генерации
+    // Инициализация начальной позиции
     int tractorX = 1;
     int tractorY = 1;
-    
-    // Начальная позиция для генерации
-    map[tractorX][tractorY] = PATH_SYMBOL;  // Исправлено
-    
-    while (!flag_end) {
-        // Прокладываем пути
-        for (int i = 0; i < n * m; i++) {
-            tractor_trail(tractorX, tractorY);
-        }
+    map[tractorX][tractorY] = PATH_SYMBOL;
 
-        // Проверка завершения генерации
-        for (int i = 1; i < n; i += 2) {
-            for (int j = 1; j < m; j += 2) {
-                if (map[i][j] == PATH_SYMBOL) count++;  // Исправлено
+    // Количество клеток, которые должны стать путями
+    int targetPaths = ((n - 1) / 2) * ((m - 1) / 2);
+    int createdPaths = 1;
+
+    // Пока не созданы все пути
+    while (createdPaths < targetPaths) {
+        // Выбираем случайное направление
+        int directions[4][2] = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}};
+        shuffle(begin(directions), end(directions), mt19937(rd()));
+
+        bool moved = false;
+        
+        // Пробуем двигаться в каждом направлении
+        for (auto &dir : directions) {
+            int newX = tractorX + dir[0];
+            int newY = tractorY + dir[1];
+
+            // Проверяем границы и что клетка - стена
+            if (newX > 0 && newX < n-1 && newY > 0 && newY < m-1 && 
+                map[newX][newY] == WALL_SYMBOL) {
+                
+                // Прокладываем путь
+                map[tractorX + dir[0]/2][tractorY + dir[1]/2] = PATH_SYMBOL;
+                map[newX][newY] = PATH_SYMBOL;
+                tractorX = newX;
+                tractorY = newY;
+                createdPaths++;
+                moved = true;
+                break;
             }
         }
-        
-        if (count == chet_pos) flag_end = true;
-        else count = 0;
+
+        // Если застряли - находим новую стартовую точку
+        if (!moved) {
+            for (int i = 1; i < n; i += 2) {
+                for (int j = 1; j < m; j += 2) {
+                    if (map[i][j] == PATH_SYMBOL) {
+                        // Проверяем соседей этой точки
+                        for (auto &dir : directions) {
+                            int newX = i + dir[0];
+                            int newY = j + dir[1];
+                            if (newX > 0 && newX < n-1 && newY > 0 && newY < m-1 && 
+                                map[newX][newY] == WALL_SYMBOL) {
+                                tractorX = i;
+                                tractorY = j;
+                                j = m; // Выход из внутреннего цикла
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -261,30 +294,48 @@ void Game::tractor_trail(int& tractorX, int& tractorY) {
 }
 
 void Game::updateVisibility() {
-    // Сброс текущей видимости
+    // Сбрасываем видимость
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             visibilityMap[i][j] = false;
         }
     }
 
-    // Установка видимости в радиусе 2 клеток
+    // Устанавливаем видимость с проверкой стен
     for (int dx = -2; dx <= 2; dx++) {
         for (int dy = -2; dy <= 2; dy++) {
-            int nx = player_posX + dx;
-            int ny = player_posY + dy;
+            int x = player_posX + dx;
+            int y = player_posY + dy;
             
-            if (nx >= 0 && nx < n && ny >= 0 && ny < m) {
-                visibilityMap[nx][ny] = true;
+            if (x >= 0 && x < n && y >= 0 && y < m) {
+                // Проверяем, нет ли стены между игроком и клеткой
+                bool visible = true;
+                int stepX = (dx == 0) ? 0 : (dx > 0) ? 1 : -1;
+                int stepY = (dy == 0) ? 0 : (dy > 0) ? 1 : -1;
                 
-                // Помечаем видимые полы как посещенные
-                if (map[nx][ny] == PATH_SYMBOL) {  // Исправлено
-                    visitedMap[nx][ny] = true;
+                int currX = player_posX;
+                int currY = player_posY;
+                
+                while (currX != x || currY != y) {
+                    currX += stepX;
+                    currY += stepY;
+                    
+                    if (map[currX][currY] == WALL_SYMBOL) {
+                        visible = false;
+                        break;
+                    }
+                }
+                
+                if (visible) {
+                    visibilityMap[x][y] = true;
+                    if (map[x][y] == PATH_SYMBOL) {
+                        visitedMap[x][y] = true;
+                    }
                 }
             }
         }
     }
     
-    // Всегда видим текущую позицию игрока
+    // Всегда видим текущую позицию
     visibilityMap[player_posX][player_posY] = true;
 }
