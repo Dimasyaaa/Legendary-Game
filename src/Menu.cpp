@@ -1,176 +1,278 @@
 #include "Menu.hpp"
+#include "Settings.hpp"
+#include "ConsoleUtils.hpp"
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <vector>
+#include <filesystem>
+#include <limits>
+#include <algorithm>
 
-int currentColor = 0;
+using namespace std;
+namespace fs = filesystem;
+
+// Объявляем функции, которые используются в Menu
+void initGame();
+void showScores();
+void changeColor();
+
+// Реализация методов класса Menu
+void Menu::displayMainMenu() {
+    Settings& settings = Settings::getInstance();
+    int choice;
+    
+    while (true) {
+        system("cls");
+        
+        // Вывод цветного заголовка
+        if (settings.isColorEnabled()) {
+            setConsoleColor(Color::GREEN);
+        }
+        cout << "===== LABICA =====" << endl;
+        resetConsoleColor();
+        
+        cout << "1. Начать игру" << endl
+             << "2. Рекорды" << endl
+             << "3. Настройки" << endl
+             << "4. Выход" << endl
+             << "Выбрать опцию (1-4): ";
+        
+        cin >> choice;
+        
+        // Обработка некорректного ввода
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            system("cls");
+            cout << "Неверный ввод! Пожалуйста, введите число." << endl;
+            continue;
+        }
+        
+        switch (choice) {
+            case 1:
+                system("cls");
+                initGame();
+                break;
+            case 2:
+                system("cls");
+                showScores();
+                cout << "\nНажмите Enter для продолжения...";
+                cin.ignore();
+                cin.get();
+                break;
+            case 3:
+                displaySettingsMenu(); // Вызов меню настроек
+                break;
+            case 4:
+                cout << "Выход из игры..." << endl;
+                exit(0);
+            default:
+                system("cls");
+                cout << "Неверный выбор! Пожалуйста, выберите от 1 до 4." << endl;
+                cin.ignore();
+                cin.get();
+        }
+    }
+}
+
+void Menu::displaySettingsMenu() {
+    Settings& settings = Settings::getInstance();
+    int choice;
+    
+    while (true) {
+        system("cls");
+        resetConsoleColor();
+        
+        cout << "=== Игровые Настройки ===" << endl << endl;
+        
+        cout << "1. Музыка: " 
+             << (settings.isMusicEnabled() ? "ВКЛ" : "ВЫКЛ") << endl
+             << "2. Цвет консоли: " 
+             << (settings.isColorEnabled() ? "ВКЛ" : "ВЫКЛ") << endl
+             << "3. Изменить цвет текста" << endl
+             << "4. Вернуться в главное меню" << endl
+             << endl << "Выберите опцию: ";
+        
+        // Проверка состояния потока ввода
+        if (cin.fail()) {
+            cin.clear();
+        }
+        cin >> choice;
+        
+        // Обработка некорректного ввода
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Неверный ввод! Пожалуйста, введите число от 1 до 4." << endl;
+            cin.get();
+            continue;
+        }
+        
+        switch (choice) {
+            case 1:
+                settings.toggleMusic();
+                cout << "\nМузыка " << (settings.isMusicEnabled() ? "ВКЛ" : "ВЫКЛ") << "!";
+                cin.ignore();
+                cin.get();
+                break;
+            case 2:
+                settings.toggleColor();
+                cout << "\nЦвета консоли " << (settings.isColorEnabled() ? "ВКЛ" : "ВЫКЛ") << "!";
+                cin.ignore();
+                cin.get();
+                break;
+            case 3:
+                changeColor();
+                break;
+            case 4:
+                return; // Возврат в главное меню
+            default:
+                cout << "Неверный выбор! Попробуйте снова." << endl;
+                cin.ignore();
+                cin.get();
+        }
+    }
+}
 
 void initGame() {
-  std::string username;
-  std::string color;
+    string username;
+    string colorValue = "default";
 
-  std::filesystem::create_directory("gamedata");
+    if (!fs::exists("gamedata")) {
+        fs::create_directory("gamedata");
+    }
 
-  std::ifstream f_in("gamedate\\config.ini", std::ios::in);
-  if (f_in.good()) {
-    std::string tmp;
-    f_in >> tmp >> tmp >> username;
-    f_in >> tmp >> tmp >> color;
-  }
-  f_in.close();
+    ifstream f_in("gamedata/config.ini");
+    if (f_in.good()) {
+        string tmp;
+        f_in >> tmp >> tmp >> username;
+        f_in >> tmp >> tmp >> colorValue;
+    }
+    f_in.close();
 
-  std::cout << "Игра началась!" << std::endl;
-  std::cout << "Введите имя: " << std::endl;
-  std::cin >> username;
+    cout << "Игра началась!" << endl;
+    cout << "Введите имя: ";
+    cin >> username;
 
-  std::ofstream f_out("gamedata\\config.ini", std::ios::out);
-  f_out << "username = " << username << std::endl;
-  f_out << "color = " << color << std::endl;
-  f_out.close();
+    ofstream f_out("gamedata/config.ini");
+    if (f_out) {
+        f_out << "username = " << username << endl;
+        f_out << "color = " << colorValue << endl;
+        cout << "Настройки сохранены!" << endl;
+    } else {
+        cerr << "Ошибка сохранения настроек!" << endl;
+    }
+    f_out.close();
+
+    cout << "\nНажмите Enter для возврата в меню...";
+    cin.ignore();
+    cin.get();
 }
 
 void showScores() {
-  std::vector<std::pair<std::string, std::string>> records;
-  std::string line;
+    vector<pair<string, string>> records;
+    string line;
 
-  std::filesystem::create_directory("gamedata");
-  std::ifstream f_in("gamedata\\records.txt", std::ios::in);
-  if (!f_in.good()) {
-    std::cout << "Рекордов ещё нет!";
-    return;
-  }
-  system("cls");
-
-  while (std::getline(f_in, line)) {
-    size_t delimiterPos = line.find('|');
-    if (delimiterPos != std::string::npos) {
-      std::string name = line.substr(0, delimiterPos);
-      std::string score = line.substr(delimiterPos + 1);
-
-      try {
-        records.emplace_back(name, score);
-      } catch (...) {
-        std::cerr << "Неправильный формат рекорда в строке № " << line
-                  << std::endl;
-      }
+    if (!fs::exists("gamedata")) {
+        fs::create_directory("gamedata");
     }
-  }
-  f_in.close();
+    
+    ifstream f_in("gamedata/records.txt");
+    
+    if (!f_in.is_open()) {
+        cout << "Рекордов ещё нет!" << endl;
+        return;
+    }
 
-  int nameWidth = 10; // Минимум для заголовка "Имя"
-  int scoreWidth = 7; // Минимум для заголовка "Рекорд"
+    while (getline(f_in, line)) {
+        size_t delimiterPos = line.find('|');
+        if (delimiterPos != string::npos) {
+            string name = line.substr(0, delimiterPos);
+            string score = line.substr(delimiterPos + 1);
+            records.emplace_back(name, score);
+        }
+    }
+    f_in.close();
 
-  for (const auto &record : records) {
-    if (record.first.length() > 10)
-      nameWidth = record.first.length();
-  }
+    if (records.empty()) {
+        cout << "Рекордов ещё нет!" << endl;
+        return;
+    }
 
-  // Верхняя граница таблицы
-  std::cout << "╔";
-  for (int i = 0; i < nameWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╦";
-  for (int i = 0; i < scoreWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╗" << std::endl;
+    int nameWidth = 4;
+    int scoreWidth = 6;
 
-  // Заголовок
-  std::cout << "║ " << std::left << std::setw(nameWidth + 3) << "Имя " << " ║ "
-            << std::right << std::setw(scoreWidth) << "Рекорд " << " ║"
-            << std::endl;
+    for (const auto& record : records) {
+        if (record.first.length() > nameWidth)
+            nameWidth = record.first.length();
+        if (record.second.length() > scoreWidth)
+            scoreWidth = record.second.length();
+    }
 
-  // Разделительная линия
-  std::cout << "╠";
-  for (int i = 0; i < nameWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╬";
-  for (int i = 0; i < scoreWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╣" << std::endl;
+    nameWidth = max(nameWidth, 4);
+    scoreWidth = max(scoreWidth, 6);
 
-  for (int i = 0; i < records.size(); i++) {
-    std::cout << "║ \033[1;36m" << std::left << std::setw(nameWidth)
-              << records[i].first;
-    std::cout << "\033[0m" << " ║ " << std::right << std::setw(scoreWidth);
+    cout << "╔";
+    for (int i = 0; i < nameWidth + 2; i++) cout << "═";
+    cout << "╦";
+    for (int i = 0; i < scoreWidth + 2; i++) cout << "═";
+    cout << "╗" << endl;
 
-    std::cout << records[i].second << "\033[0m ║" << std::endl;
-  }
+    cout << "║ " << left << setw(nameWidth) << "Имя" << "  ║ "
+         << right << setw(scoreWidth) << "Рекорд" << " ║" << endl;
 
-  // Нижняя граница таблицы
-  std::cout << "╚";
-  for (int i = 0; i < nameWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╩";
-  for (int i = 0; i < scoreWidth + 2; i++)
-    std::cout << "═";
-  std::cout << "╝" << std::endl;
-}
+    cout << "╠";
+    for (int i = 0; i < nameWidth + 2; i++) cout << "═";
+    cout << "╬";
+    for (int i = 0; i < scoreWidth + 2; i++) cout << "═";
+    cout << "╣" << endl;
 
-void showSettings() {
-  std::cout << "Настройки:" << std::endl;
+    for (const auto& record : records) {
+        cout << "║ " << left << setw(nameWidth) << record.first << "  ║ "
+             << right << setw(scoreWidth) << record.second << " ║" << endl;
+    }
 
-  // TODO выбор настроек,
-  // changeColor();
-  // Здесь мы пропишем настроечки
+    cout << "╚";
+    for (int i = 0; i < nameWidth + 2; i++) cout << "═";
+    cout << "╩";
+    for (int i = 0; i < scoreWidth + 2; i++) cout << "═";
+    cout << "╝" << endl;
 }
 
 void changeColor() {
-  std::cout
-      << "Select the text color (0 - normal, 1 - red, 2 - green, 3 - blue):";
-  std::cin >> currentColor;
-
-  switch (currentColor) {
-  case 0:
-    std::cout << "\033[0m"; // Нормальный цвет
-    break;
-  case 1:
-    std::cout << "\033[31m"; // Красный
-    break;
-  case 2:
-    std::cout << "\033[32m"; // Зелёный
-    break;
-  case 3:
-    std::cout << "\033[34m"; // Синий
-    break;
-  default:
-    std::cout << "\033[0m";
-    std::cout << "Wrong choice. The color is set by default." << std::endl;
-    break;
-  }
-}
-
-void showMenu() {
-  std::cout << "===== LABICA =====" << std::endl
-            << "1. Начать игру" << std::endl
-            << "2. Рекорды" << std::endl
-            << "3. Настройки" << std::endl
-            << "4. Выход" << std::endl;
-}
-
-int runMenu() {
-  int choice;
-
-  while (true) {
-    showMenu();
-    std::cout << "Выбрать опцию (1-4): ";
-    std::cin >> choice;
-    switch (choice) {
-    case 1:
-      system("cls");
-      initGame();
-      return 1;
-    case 2:
-      system("cls");
-      showScores();
-      break;
-    case 3:
-      system("cls");
-      showSettings();
-      break;
-    case 4:
-      std::cout << "Выход из игры..." << std::endl;
-      return 0;
-    default:
-      system("cls");
-      std::cout << "Неверный выбор, дубина!" << std::endl;
+    int colorChoice;
+    cout << "Выберите цвет текста:\n"
+         << "0: Стандартный\n"
+         << "1: Красный\n"
+         << "2: Зеленый\n"
+         << "3: Синий\n"
+         << "Ваш выбор: ";
+    
+    cin >> colorChoice;
+    
+    if (!fs::exists("gamedata")) {
+        fs::create_directory("gamedata");
     }
-    std::cout << std::endl; // Для удобства
-  }
+    
+    ofstream f_out("gamedata/color.cfg");
+    if (f_out) {
+        f_out << colorChoice;
+        cout << "Цвет изменен!" << endl;
+    } else {
+        cerr << "Ошибка сохранения цвета!" << endl;
+    }
+    f_out.close();
+    
+    switch (colorChoice) {
+        case 0: resetConsoleColor(); break;
+        case 1: setConsoleColor(Color::RED); break;
+        case 2: setConsoleColor(Color::GREEN); break;
+        case 3: setConsoleColor(Color::BLUE); break;
+        default: resetConsoleColor();
+    }
+    
+    cout << "\nНажмите Enter для продолжения...";
+    cin.ignore();
+    cin.get();
 }

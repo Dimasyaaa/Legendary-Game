@@ -12,7 +12,7 @@ int main() {
   // 0 - выход, 1 - запуск игры
   switch (choice) {
   case 1: {
-    cout << "Начало игры" << std::endl;
+    cout << "Начало игры" << endl;
     Game game;
     game.run();
     break;

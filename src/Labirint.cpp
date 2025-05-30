@@ -169,7 +169,7 @@ void Game::handleInput() {
     if (player_posX == treasure_X && player_posY == treasure_Y) {
         gotoxy(n, 0);
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-        cout << "You found the treasure! Press any key to exit.";
+        cout << "ПОЗДРАВЛЯЕМ!!! Вы нашли сокровище! Нажмите любую клавишу для выхода.";
         _getch();
         isRunning = false;
     }
