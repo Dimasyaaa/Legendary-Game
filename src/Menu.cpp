@@ -1,6 +1,7 @@
 #include "Menu.hpp"
 #include "Settings.hpp"
 #include "ConsoleUtils.hpp"
+#include "Labirint.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -11,11 +12,6 @@
 
 using namespace std;
 namespace fs = filesystem;
-
-// Объявляем функции, которые используются в Menu
-void initGame();
-void showScores();
-void changeColor();
 
 // Реализация методов класса Menu
 void Menu::displayMainMenu() {
@@ -62,7 +58,7 @@ void Menu::displayMainMenu() {
                 cin.get();
                 break;
             case 3:
-                displaySettingsMenu(); // Вызов меню настроек
+                displaySettingsMenu();
                 break;
             case 4:
                 cout << "Выход из игры..." << endl;
@@ -94,13 +90,11 @@ void Menu::displaySettingsMenu() {
              << "4. Вернуться в главное меню" << endl
              << endl << "Выберите опцию: ";
         
-        // Проверка состояния потока ввода
         if (cin.fail()) {
             cin.clear();
         }
         cin >> choice;
         
-        // Обработка некорректного ввода
         if (cin.fail()) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -126,7 +120,7 @@ void Menu::displaySettingsMenu() {
                 changeColor();
                 break;
             case 4:
-                return; // Возврат в главное меню
+                return;
             default:
                 cout << "Неверный выбор! Попробуйте снова." << endl;
                 cin.ignore();
@@ -165,9 +159,9 @@ void initGame() {
     }
     f_out.close();
 
-    cout << "\nНажмите Enter для возврата в меню...";
-    cin.ignore();
-    cin.get();
+    // Запуск игры
+    Game game;
+    game.run();
 }
 
 void showScores() {
@@ -249,7 +243,12 @@ void changeColor() {
          << "3: Синий\n"
          << "Ваш выбор: ";
     
-    cin >> colorChoice;
+    if (!(cin >> colorChoice)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Ошибка ввода! Используется стандартный цвет." << endl;
+        colorChoice = 0;
+    }
     
     if (!fs::exists("gamedata")) {
         fs::create_directory("gamedata");
@@ -269,7 +268,9 @@ void changeColor() {
         case 1: setConsoleColor(Color::RED); break;
         case 2: setConsoleColor(Color::GREEN); break;
         case 3: setConsoleColor(Color::BLUE); break;
-        default: resetConsoleColor();
+        default: 
+            resetConsoleColor();
+            cout << "Неверный выбор! Используется стандартный цвет." << endl;
     }
     
     cout << "\nНажмите Enter для продолжения...";

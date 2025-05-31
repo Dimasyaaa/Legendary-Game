@@ -44,6 +44,12 @@ Game::Game()
     // Установка кодовой страницы для корректного отображения
     SetConsoleOutputCP(CP_UTF8);
     
+    // Увеличиваем размер окна консоли
+    HWND console = GetConsoleWindow();
+    RECT r;
+    GetWindowRect(console, &r);
+    MoveWindow(console, r.left, r.top, 800, 600, TRUE);
+    
     // Инициализация карт
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
@@ -67,10 +73,30 @@ Game::Game()
     updateVisibility();
 }
 
+void Game::showStartScreen() {
+    system("cls");
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    
+    // Желтый цвет для заголовка
+    SetConsoleTextAttribute(hConsole, 14);
+    gotoxy(10, 10);
+    cout << "Л А Б И Р И Н Т";
+    
+    // Зеленый цвет для кнопки старта
+    SetConsoleTextAttribute(hConsole, 10);
+    gotoxy(12, 10);
+    cout << "НАЧАТЬ ИГРУ - НАЖМИТЕ ЛЮБУЮ КЛАВИШУ";
+    
+    // Сброс цвета
+    SetConsoleTextAttribute(hConsole, 7);
+    _getch(); // Ожидание нажатия клавиши
+}
+
 void Game::run() {
-    displayMap();
+    showStartScreen(); // Показ стартового экрана
+    displayMap();      // Инициализация игрового поля
     while (isRunning) {
-        handleInput();
+        handleInput(); // Обработка игрового процесса
     }
 }
 
@@ -119,7 +145,7 @@ void Game::displayMap() {
             // Неизведанные области
             else {
                 SetConsoleTextAttribute(hConsole, 8);
-                cout << FOG_SYMBOL;  // Исправлено
+                cout << FOG_SYMBOL;
             }
         }
         cout << endl;
@@ -185,7 +211,7 @@ void Game::generateMap() {
     int tractorY = 1;
     
     // Начальная позиция для генерации
-    map[tractorX][tractorY] = PATH_SYMBOL;  // Исправлено
+    map[tractorX][tractorY] = PATH_SYMBOL;
     
     while (!flag_end) {
         // Прокладываем пути
@@ -196,7 +222,7 @@ void Game::generateMap() {
         // Проверка завершения генерации
         for (int i = 1; i < n; i += 2) {
             for (int j = 1; j < m; j += 2) {
-                if (map[i][j] == PATH_SYMBOL) count++;  // Исправлено
+                if (map[i][j] == PATH_SYMBOL) count++;
             }
         }
         
@@ -231,29 +257,29 @@ void Game::tractor_trail(int& tractorX, int& tractorY) {
     switch (vect) {
     case 1: // Вверх
         if (tractorX > 1 && map[tractorX - 2][tractorY] == WALL_SYMBOL) {
-            map[tractorX - 1][tractorY] = PATH_SYMBOL;  // Исправлено
-            map[tractorX - 2][tractorY] = PATH_SYMBOL;  // Исправлено
+            map[tractorX - 1][tractorY] = PATH_SYMBOL;
+            map[tractorX - 2][tractorY] = PATH_SYMBOL;
             tractorX -= 2;
         }
         break;
     case 2: // Вправо
         if (tractorY < m - 2 && map[tractorX][tractorY + 2] == WALL_SYMBOL) {
-            map[tractorX][tractorY + 1] = PATH_SYMBOL;  // Исправлено
-            map[tractorX][tractorY + 2] = PATH_SYMBOL;  // Исправлено
+            map[tractorX][tractorY + 1] = PATH_SYMBOL;
+            map[tractorX][tractorY + 2] = PATH_SYMBOL;
             tractorY += 2;
         }
         break;
     case 3: // Вниз
         if (tractorX < n - 2 && map[tractorX + 2][tractorY] == WALL_SYMBOL) {
-            map[tractorX + 1][tractorY] = PATH_SYMBOL;  // Исправлено
-            map[tractorX + 2][tractorY] = PATH_SYMBOL;  // Исправлено
+            map[tractorX + 1][tractorY] = PATH_SYMBOL;
+            map[tractorX + 2][tractorY] = PATH_SYMBOL;
             tractorX += 2;
         }
         break;
     case 4: // Влево
         if (tractorY > 1 && map[tractorX][tractorY - 2] == WALL_SYMBOL) {
-            map[tractorX][tractorY - 1] = PATH_SYMBOL;  // Исправлено
-            map[tractorX][tractorY - 2] = PATH_SYMBOL;  // Исправлено
+            map[tractorX][tractorY - 1] = PATH_SYMBOL;
+            map[tractorX][tractorY - 2] = PATH_SYMBOL;
             tractorY -= 2;
         }
         break;
@@ -278,7 +304,7 @@ void Game::updateVisibility() {
                 visibilityMap[nx][ny] = true;
                 
                 // Помечаем видимые полы как посещенные
-                if (map[nx][ny] == PATH_SYMBOL) {  // Исправлено
+                if (map[nx][ny] == PATH_SYMBOL) {
                     visitedMap[nx][ny] = true;
                 }
             }
